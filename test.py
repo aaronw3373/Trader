@@ -18,11 +18,10 @@ wb.set_colour_RGB(0x21,200, 255, 200)
 xlwt.add_palette_colour("custom_red", 0x22)
 wb.set_colour_RGB(0x22,255, 200, 200)
 
-style1 = xlwt.easyxf(num_format_str='D/M/YYYY')
+style1 = xlwt.easyxf(num_format_str='M/D/YYYY')
 
 style0 = xlwt.easyxf('font: color-index black',
     num_format_str='#,###0.000')
-
 
 style2 = xlwt.easyxf('pattern:  pattern solid, fore_color custom_green; font: color-index green',
     num_format_str='#,##0.00%')
@@ -82,13 +81,17 @@ def numDayAvg(input, numDays, colWrite, head, style, output):
   for i in range(0, length):
     total = 0
     count = 0;
-    for j in range(0, numDays):
-      if (i - j) >= 0:
-        count += 1
-        total += input[i - j]
-    avg = total / count
-    output.append(avg)
-    ws.write(num,colWrite,avg, style)
+    if i - numDays >= -1:
+      for j in range(0, numDays):
+        if (i - j) >= 0:
+          count += 1
+          total += input[i - j]
+      avg = total / count
+      output.append(avg)
+      ws.write(num,colWrite,avg, style)
+    else:
+      output.append(0)
+      ws.write(num,colWrite,0, style)
     num += 1
 
 numDayAvg(dataClose, 200, 4, "200 Day Avg", style0, data200Avg)
@@ -108,7 +111,7 @@ def numDayRtn(input, numDays, colWrite, head, output):
   length = len(input)
   num = 2
   for i in range(0, length):
-    if (i -numDays) >= 0:
+    if (i - numDays) >= 0:
       diff = (input[i] - input[i-numDays])/input[i-numDays]
       style = style2
       if diff < 0:
@@ -198,13 +201,19 @@ def bottomLine(test, others, colWrite, head):
   length = len(test)
   num = 2
   for i in range(0, length):
-    res = 1
-    style = style7
-    for other in others:
-      if test[i] > other[i]:
-        res = 0
-        style = style6
-    ws.write(num,colWrite,res,style)
+    if test[i] != 0:
+      res = 1
+      style = style7
+      for other in others:
+        if other[i] != 0:
+          if test[i] > other[i]:
+            res = 0
+            style = style6
+      ws.write(num,colWrite,res,style)
+    else:
+      res = 0
+      style = style6
+      ws.write(num,colWrite,res,style)
     num += 1
 
 bottomLine(data10Avg, [data30Avg, data50Avg, data100Avg, data200Avg, dataClose], 22, "10 Day Bottom")
@@ -213,6 +222,92 @@ bottomLine(data50Avg, [data10Avg, data30Avg, data100Avg, data200Avg, dataClose],
 bottomLine(data100Avg, [data10Avg, data30Avg, data50Avg, data200Avg, dataClose], 25, "100 Day Bottom")
 bottomLine(data200Avg, [data10Avg, data30Avg, data50Avg, data100Avg, dataClose], 26, "200 Day Bottom")
 bottomLine(dataClose, [data10Avg, data30Avg, data50Avg, data100Avg, data200Avg], 27, "Close Bottom")
+
+def priceAbove(test, other, colWrite, head):
+  ws.write(1,colWrite,head)
+  length = len(test)
+  num = 2
+  for i in range(0, length):
+    if test[i] != 0 and other[i] != 0:
+      res = 0
+      style = style6
+      if test[i] > other[i]:
+          res = 1
+          style = style5
+      ws.write(num,colWrite,res,style)
+    else:
+      res = 0
+      style = style6
+      ws.write(num,colWrite,res,style)
+    num += 1
+
+priceAbove(data10Avg, data30Avg, 28, "10 above 30")
+priceAbove(data10Avg, data50Avg, 29, "10 above 50")
+priceAbove(data10Avg, data100Avg, 30, "10 above 100")
+priceAbove(data10Avg, data200Avg, 31, "10 above 200")
+
+priceAbove(data30Avg, data10Avg, 32, "30 above 10")
+priceAbove(data30Avg, data50Avg, 33, "30 above 50")
+priceAbove(data30Avg, data100Avg, 34, "30 above 100")
+priceAbove(data30Avg, data200Avg, 35, "30 above 200")
+
+priceAbove(data50Avg, data10Avg, 36, "50 above 10")
+priceAbove(data50Avg, data30Avg, 37, "50 above 30")
+priceAbove(data50Avg, data100Avg, 38, "50 above 100")
+priceAbove(data50Avg, data200Avg, 39, "50 above 200")
+
+priceAbove(data100Avg, data10Avg, 40, "100 above 10")
+priceAbove(data100Avg, data30Avg, 41, "100 above 30")
+priceAbove(data100Avg, data50Avg, 42, "100 above 50")
+priceAbove(data100Avg, data200Avg, 43, "100 above 200")
+
+priceAbove(data200Avg, data10Avg, 44, "200 above 10")
+priceAbove(data200Avg, data30Avg, 45, "200 above 30")
+priceAbove(data200Avg, data50Avg, 46, "200 above 50")
+priceAbove(data200Avg, data100Avg, 47, "200 above 100")
+
+def priceBelow(test, other, colWrite, head):
+  ws.write(1,colWrite,head)
+  length = len(test)
+  num = 2
+  for i in range(0, length):
+    if test[i] != 0 and other[i] != 0:
+      res = 0
+      style = style6
+      if test[i] < other[i]:
+          res = 1
+          style = style7
+      ws.write(num,colWrite,res,style)
+    else:
+      res = 0
+      style = style6
+      ws.write(num,colWrite,res,style)
+    num += 1
+
+priceBelow(data10Avg, data30Avg, 48, "10 below 30")
+priceBelow(data10Avg, data50Avg, 49, "10 below 50")
+priceBelow(data10Avg, data100Avg, 50, "10 below 100")
+priceBelow(data10Avg, data200Avg, 51, "10 below 200")
+
+priceBelow(data30Avg, data10Avg, 52, "30 below 10")
+priceBelow(data30Avg, data50Avg, 53, "30 below 50")
+priceBelow(data30Avg, data100Avg, 54, "30 below 100")
+priceBelow(data30Avg, data200Avg, 55, "30 below 200")
+
+priceBelow(data50Avg, data10Avg, 56, "50 below 10")
+priceBelow(data50Avg, data30Avg, 57, "50 below 30")
+priceBelow(data50Avg, data100Avg, 58, "50 below 100")
+priceBelow(data50Avg, data200Avg, 59, "50 below 200")
+
+priceBelow(data100Avg, data10Avg, 60, "100 below 10")
+priceBelow(data100Avg, data30Avg, 61, "100 below 30")
+priceBelow(data100Avg, data50Avg, 62, "100 below 50")
+priceBelow(data100Avg, data200Avg, 63, "100 below 200")
+
+priceBelow(data200Avg, data10Avg, 64, "200 below 10")
+priceBelow(data200Avg, data30Avg, 65, "200 below 30")
+priceBelow(data200Avg, data50Avg, 66, "200 below 50")
+priceBelow(data200Avg, data100Avg, 67, "200 below 100")
 
 
 wb.save('end_model.xls')
