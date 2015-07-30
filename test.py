@@ -47,6 +47,8 @@ def setColWrite():
 print("model imported, parsing data...");
 
 # limits on the data store
+
+# IMPORTANT!!! make this a function add add where to read from the file to work on all input
 lowerRange = 7
 upperRange = 3424
 
