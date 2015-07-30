@@ -4,8 +4,7 @@ from datetime import datetime
 
 # New styles and colors
 wb = xlwt.Workbook()
-ws = wb.add_sheet("model")
-
+ws = wb.add_sheet('model')
 xlwt.add_palette_colour("custom_green", 0x21)
 wb.set_colour_RGB(0x21,200, 255, 200)
 xlwt.add_palette_colour("custom_red", 0x22)
@@ -27,11 +26,14 @@ style7 = xlwt.easyxf('pattern:  pattern solid, fore_color custom_red; font: colo
     num_format_str='#0')
 
 # Function definitions
-cwn = 0
+cwn = -1
 def setColWrite():
   global cwn
   cwn +=1
   return cwn
+def resetColWrite():
+  global cwn
+  cwn = -1
 
 def sheetParser(input,low, high, colRead, colWrite, head, output, style):
   ws.write(1,colWrite,head)
