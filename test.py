@@ -6,12 +6,25 @@ from datetime import datetime
 
 print("reading models...")
 
+vars_model = xlrd.open_workbook("inputVars.xlsx")
+varsSheet = vars_model.sheets()[0]
+varInputPrice1 = varsSheet.row_values(4)[5]
+varInputPercent1 = varsSheet.row_values(5)[5]
+varInputPercent2 = varsSheet.row_values(6)[5]
+varInputPercent3 = varsSheet.row_values(7)[5]
+varInputPercent5 = varsSheet.row_values(8)[5]
+
+
+
+
 data_model = xlrd.open_workbook("input.xlsx")
 sheet = data_model.sheets()[0]
 
 wb = xlwt.Workbook()
 ws = wb.add_sheet("model")
 
+
+print("setting styles")
 xlwt.add_palette_colour("custom_green", 0x21)
 wb.set_colour_RGB(0x21,200, 255, 200)
 
@@ -41,7 +54,6 @@ cwn = 0
 def setColWrite():
   global cwn
   cwn +=1
-  print cwn
   return cwn
 
 print("model imported, parsing data...");
@@ -74,7 +86,7 @@ sheetParser(sheet,lowerRange,upperRange,3, setColWrite(), "Close",dataClose,styl
 sheetParser(sheet,lowerRange,upperRange,4, setColWrite(), "Open",dataOpen,style0)
 sheetParser(sheet,lowerRange,upperRange,5, setColWrite(), "High",dataHigh,style0)
 sheetParser(sheet,lowerRange,upperRange,6, setColWrite(), "Low",dataLow,style0)
-
+setColWrite()
 print('finding averages...')
 
 # Moving Average Calculator
@@ -108,7 +120,7 @@ numDayAvg(dataClose, 100, setColWrite(), "100 Day Avg", style0, data100Avg)
 numDayAvg(dataClose, 50, setColWrite(), "50 Day Avg", style0, data50Avg)
 numDayAvg(dataClose, 30, setColWrite(), "30 Day Avg", style0, data30Avg)
 numDayAvg(dataClose, 10, setColWrite(), "10 Day Avg", style0, data10Avg)
-
+setColWrite()
 print("finding returns...")
 # number of days returns
 data2Rtn = []
@@ -180,7 +192,7 @@ def dayRtn(open, close, colWrite, head, output):
     num += 1
 
 dayRtn(dataOpen, dataClose, setColWrite(), "Daytime Return", dataDayRtn)
-
+setColWrite()
 print("testing for signals...")
 
 #SIGNALS
@@ -344,6 +356,7 @@ crossBelow(data200Avg, data30Avg, setColWrite(), "200 below 30")
 crossBelow(data200Avg, data50Avg, setColWrite(), "200 below 50")
 crossBelow(data200Avg, data100Avg, setColWrite(), "200 below 100")
 
+setColWrite()
 # variable signals
 
 def crossVarPrice(test, var, colWrite, head):
@@ -367,9 +380,7 @@ def crossVarPrice(test, var, colWrite, head):
       ws.write(num,colWrite,res,style)
     num += 1
 
-# varInputPrice = raw_input("Please enter a price to cross: ")
-# print "you entered", varInputPrice
-# crossVarPrice(dataClose, float(varInputPrice), setColWrite(), "close cross " + varInputPrice)
+crossVarPrice(dataClose, varInputPrice1, setColWrite(), "close cross " + str(varInputPrice1))
 
 
 def crossVarPercent(test, var, colWrite, head):
@@ -405,30 +416,15 @@ def crossVarPercent(test, var, colWrite, head):
         ws.write(num,colWrite,res,style)
       num += 1
 
-# VarInput2 = raw_input("Please enter a decimal percent to cross 2 Day Return: ")
-# print "you entered", VarInput2
-# crossVarPercent(data2Rtn, float(VarInput2),setColWrite(), "2D X " + VarInput2)
+crossVarPercent(data1Rtn, varInputPercent1,setColWrite(), "1D X " + str(varInputPercent1))
+crossVarPercent(data2Rtn, varInputPercent2,setColWrite(), "2D X " + str(varInputPercent2))
+crossVarPercent(data3Rtn, varInputPercent3,setColWrite(), "3D X " + str(varInputPercent3))
+crossVarPercent(data5Rtn, varInputPercent5,setColWrite(), "5D X " + str(varInputPercent5))
 
-# VarInput3 = raw_input("Please enter a decimal percent to cross 3 Day Return: ")
-# print "you entered", VarInput3
-# crossVarPercent(data3Rtn, float(VarInput3),setColWrite(), "3D X " + VarInput3)
-
-# VarInput5 = raw_input("Please enter a decimal percent to cross 5 Day Return: ")
-# print "you entered", VarInput5
-# crossVarPercent(data5Rtn, float(VarInput5),setColWrite(), "5D X " + VarInput5)
-
-# VarInput1 = raw_input("Please enter a decimal percent to cross 1 Day Return: ")
-# print "you entered", VarInput1
-# crossVarPercent(data1Rtn, float(VarInput1),setColWrite(), "1D X " + VarInput1)
-
-# VarInput0 = raw_input("Please enter a decimal percent to cross Daytime Return: ")
-# print "you entered", VarInput0
 # crossVarPercent(dataDayRtn, float(VarInput0),setColWrite(), "Day X " + VarInput0)
-
-# VarInput = raw_input("Please enter a decimal percent to cross Nighttime Return: ")
-# print "you entered", VarInput
 # crossVarPercent(dataNightRtn, float(VarInput),setColWrite(), "Nt X " + VarInput)
 
+# NEED ONE DAY RETURN LIMIT
 
 def highBtwDays(test, numDays, colWrite, head):
   ws.write(1,colWrite,head)
