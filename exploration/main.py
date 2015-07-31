@@ -1,4 +1,4 @@
-from index import *
+from functions import *
 
 # Input variables
 vars_model = xlrd.open_workbook("inputVars.xlsx")
