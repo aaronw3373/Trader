@@ -36,12 +36,6 @@ def findEnd(i, inputDF):
     if pd.isnull(inputDF.iloc[j,i+1]):
       return j
 
-def save_xls(list_dfs, xls_path):
-    writer = pd.ExcelWriter(xls_path)
-    for n, df in enumerate(list_dfs):
-        df.to_excel(writer,'sheet%s' % n, engine="openpyxl")
-    writer.save()
-
 def readFile():
   for i in range(0, len(inputDF.columns)):
     if pd.notnull(inputDF.iloc[3,i]):
@@ -58,6 +52,12 @@ def readFile():
       stockInfo.append(stockOBJ)
       # take out this return to do the whole set of stocks not just the first
       return
+def save_xls(list_dfs, xls_path):
+    writer = pd.ExcelWriter(xls_path)
+    for n, df in enumerate(list_dfs):
+        df.to_excel(writer,'sheet%s' % n, engine="openpyxl")
+    writer.save()
+
 
 print("reading file into objects...")
 stockInfo = []
