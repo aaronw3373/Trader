@@ -1,3 +1,4 @@
+import openpyxl
 import pandas as pd
 import numpy as np
 
@@ -7,20 +8,24 @@ def setColName():
   global colName
   colName +=1
   return colName
+def resetColName():
+  global colName
+  colName = -1
 
 # move data from input dataframe to organized stock dataframe
 def sheetParser(input, stock):
-  df = pd.DataFrame({
+  newFrame = pd.DataFrame({
     setColName(): input.iloc[stock["rowStart"]:stock["rowEnd"],stock["dateRead"]].values,
     setColName(): input.iloc[stock["rowStart"]:stock["rowEnd"],stock["closeRead"]].values,
     setColName(): input.iloc[stock["rowStart"]:stock["rowEnd"],stock["openRead"]].values,
     setColName(): input.iloc[stock["rowStart"]:stock["rowEnd"],stock["highRead"]].values,
     setColName():input.iloc[stock["rowStart"]:stock["rowEnd"],stock["lowRead"]].values
     })
-  return df
+  return newFrame
 
 # find moving averages
 def numDayAvg(input, numDays):
+  temp = pd.rolling_mean(input, numDays)
   avg = pd.Series(temp, name=setColName())
   return avg
 
@@ -41,9 +46,54 @@ def nightRtn(closeYesterday, openToday):
 
 def dayRtn(openToday, closeToday):
   array = []
-  print closeToday[0]
   for i in range(0, len(openToday)):
     change = (closeToday[i]-openToday[i])/openToday[i]
     array.append(change)
   rtn = pd.Series(array, name=setColName())
   return rtn
+
+# Tests
+# top line
+def topLine(test, others):
+  array = []
+  for i in range(0, len(test)):
+    if pd.notnull(test[i]):
+      res = 1
+      for other in others:
+        if test[i] < other[i]:
+          res = 0
+      array.append(res)
+    else:
+      array.append(0)
+  results = pd.Series(array, name=setColName())
+  return results
+
+
+# bottom line
+def bottomLine(test, others):
+  array = []
+  for i in range(0, len(test)):
+    if pd.notnull(test[i]):
+      res = 1
+      for other in others:
+        if test[i] > other[i]:
+          res = 0
+      array.append(res)
+    else:
+      array.append(0)
+  results = pd.Series(array, name=setColName())
+  return results
+
+# price above
+def priceAbove(test, other):
+  array = []
+  for i in range(0, len(test)):
+    if pd.notnull(other[i]):
+      res = 0
+      if test[i] > other[i]:
+        res = 1
+      array.append(res)
+    else:
+      array.append(0)
+  results = pd.Series(array, name=setColName())
+  return results
