@@ -1,6 +1,5 @@
 from index import *
 
-
 # Input variables
 vars_model = xlrd.open_workbook("inputVars.xlsx")
 varsSheet = vars_model.sheets()[0]
