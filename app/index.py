@@ -97,3 +97,101 @@ def priceAbove(test, other):
       array.append(0)
   results = pd.Series(array, name=setColName())
   return results
+
+def crossAbove(test, other):
+  array = []
+  for i in range(0, len(test)):
+    if pd.notnull(test[i]) and pd.notnull(other[i]):
+      res = 0
+      if test[i-1] < other[i-1] and test[i] > other[i]:
+        res = 1
+      array.append(res)
+    else:
+      array.append(0)
+  results = pd.Series(array, name=setColName())
+  return results
+
+def crossBelow(test, other):
+  array = []
+  for i in range(0, len(test)):
+    if pd.notnull(test[i]) and pd.notnull(other[i]):
+      res = 0
+      if test[i-1] > other[i-1] and test[i] < other[i]:
+        res = 1
+      array.append(res)
+    else:
+      array.append(0)
+  results = pd.Series(array, name=setColName())
+  return results
+
+def crossVarPrice(test, var):
+  array = []
+  array.append(0)
+  for i in range(1, len(test)):
+    if pd.notnull(test[i]):
+      res = 0
+      if test[i] > var and test[i-1] < var:
+          res = 1
+      elif test[i] < var and test[i-1] > var:
+          res = 1
+      array.append(res)
+    else:
+      array.append(0)
+  results = pd.Series(array, name=setColName())
+  return results
+
+def crossVarPercent(test, var):
+  array = []
+  if var >= 0:
+    for i in range(0, len(test)):
+      if pd.notnull(test[i]):
+        res = 0
+        if test[i] > var:
+            res = 1
+        array.append(res)
+      else:
+        array.append(0)
+  elif var < 0:
+    for i in range(0, len(test)):
+      if pd.notnull(test[i]):
+        res = 0
+        if test[i] < var:
+            res = 1
+        array.append(res)
+      else:
+        array.append(0)
+  results = pd.Series(array, name=setColName())
+  return results
+
+def highBtwDays(test, numDays):
+  array = []
+  for i in range(0, len(test)):
+    if i - numDays >= -1:
+      res = 1
+      style = style5
+      for j in range(0,numDays):
+        if test[i] < test[i-j]:
+          res = 0
+          style = style6
+      ws.write(num,colWrite,res,style)
+    else:
+      array.append(0)
+  results = pd.Series(array, name=setColName())
+  return results
+
+
+def lowBtwDays(test, numDays, colWrite, head):
+  array = []
+  for i in range(0, len(test)):
+    if i - numDays >= -1:
+      res = 1
+      style = style5
+      for j in range(0,numDays):
+        if test[i] > test[i-j]:
+          res = 0
+          style = style6
+      ws.write(num,colWrite,res,style)
+    else:
+      array.append(0)
+  results = pd.Series(array, name=setColName())
+  return results
