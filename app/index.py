@@ -21,7 +21,6 @@ def sheetParser(input, stock):
 
 # find moving averages
 def numDayAvg(input, numDays):
-  temp = pd.rolling_mean(input,numDays)
   avg = pd.Series(temp, name=setColName())
   return avg
 

@@ -1,4 +1,4 @@
-from functions import *
+from index import *
 import xlrd
 import sys
 
