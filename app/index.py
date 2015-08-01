@@ -163,34 +163,30 @@ def crossVarPercent(test, var):
   results = pd.Series(array, name=setColName())
   return results
 
-def highBtwDays(test, numDays):
+def highBtwDays(test, numDays, percent):
   array = []
   for i in range(0, len(test)):
     if i - numDays >= -1:
       res = 1
-      style = style5
       for j in range(0,numDays):
         if test[i] < test[i-j]:
           res = 0
-          style = style6
-      ws.write(num,colWrite,res,style)
+      array.append(res)
     else:
       array.append(0)
   results = pd.Series(array, name=setColName())
   return results
 
 
-def lowBtwDays(test, numDays, colWrite, head):
+def lowBtwDays(test, numDays, percent):
   array = []
   for i in range(0, len(test)):
     if i - numDays >= -1:
       res = 1
-      style = style5
       for j in range(0,numDays):
         if test[i] > test[i-j]:
           res = 0
-          style = style6
-      ws.write(num,colWrite,res,style)
+      array.append(res)
     else:
       array.append(0)
   results = pd.Series(array, name=setColName())

@@ -23,7 +23,7 @@ varInputPercentIL = varsSheet.row_values(12)[5]
 varInputPercentEL = varsSheet.row_values(13)[5]
 varInputPercentDay = varsSheet.row_values(14)[5]
 varInputPercentNt = varsSheet.row_values(15)[5]
-varInputNumDays = int(varsSheet.row_values(16)[5])
+# varInputNumDays = int(varsSheet.row_values(16)[4])
 varInputPercentDays = varsSheet.row_values(16)[5]
 
 # GET INPUT FILE
@@ -52,6 +52,7 @@ def readFile():
       stockInfo.append(stockOBJ)
       # take out this return to do the whole set of stocks not just the first
       return
+
 def save_xls(list_dfs, xls_path):
     writer = pd.ExcelWriter(xls_path)
     for n, df in enumerate(list_dfs):
@@ -70,7 +71,7 @@ for stock in stockInfo:
   resetColName()
 
   # Parse the data into a new DataFrame
-  # 0-4
+  # 0-4 date, close, open, high, low
   df = sheetParser(inputDF,stock)
 
   # Get moving averages over x numver of days
@@ -177,23 +178,18 @@ for stock in stockInfo:
   df = pd.concat([df, crossVarPercent(df[10], varInputPercent2)],axis=1)
   df = pd.concat([df, crossVarPercent(df[11], varInputPercent3)],axis=1)
   df = pd.concat([df, crossVarPercent(df[12], varInputPercent5)],axis=1)
-  df = pd.concat([df, crossVarPercent(df[15], varInputPercent1)],axis=1)
-  # df = pd.concat([df, ],axis=1)
-
   # NEED ONE DAY RETURN LIMIT
+  df = pd.concat([df, crossVarPercent(df[15], varInputPercent1)],axis=1)
+  # 78-81
+  df = pd.concat([df, highBtwDays(df[1], varInputDayEH, varInputPercentEH)],axis=1)
+  df = pd.concat([df, highBtwDays(df[3], varInputDayIH, varInputPercentIH)],axis=1)
+  df = pd.concat([df, lowBtwDays(df[1], varInputDayEL, varInputPercentEL)],axis=1)
+  df = pd.concat([df, lowBtwDays(df[4], varInputDayIL, varInputPercentIL)],axis=1)
+  # 82-83
+  df = pd.concat([df, crossVarPercent(df[14], varInputPercentDay)],axis=1)
+  df = pd.concat([df, crossVarPercent(df[13], varInputPercentNt)],axis=1)
 
-  print highBtwDays(df[1], varInputDayEH)
-  # highBtwDays(df[3], varInputDayIH)
-  # lowBtwDays(df[1], varInputDayEL)
-  # lowBtwDays(df[4], varInputDayIL)
-
-  # crossVarPercent(dataDayRtn, varInputPercentDay,setColWrite(), "Day X " + str(varInputPercentDay))
-  # crossVarPercent(dataNightRtn, varInputPercentNt,setColWrite(), "Nt X " + str(varInputPercentNt))
-
-  # varDayRtn(data1Rtn, int(varInput14), setColWrite(), varInput14 + " day Rtn")
-
-
-
+  # varDayRtn(data1Rtn, int(varInput14))
 
 
 
