@@ -33,3 +33,7 @@ python setup.py
 Once complete you can now run Trader from anywhere on your computer.
 
 
+#Questions
+
+lines s and t in the results model are the same
+

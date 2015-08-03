@@ -26,6 +26,7 @@ varInputPercentDay = varsSheet.row_values(14)[5]
 varInputPercentNt = varsSheet.row_values(15)[5]
 varInputNumDays = int(varsSheet.row_values(16)[4])
 varInputPercentDays = varsSheet.row_values(16)[5]
+col1 = varsSheet.row_values(27)[2]
 
 # GET INPUT FILE
 inputDF = pd.read_excel(sys.argv[1])
@@ -203,11 +204,11 @@ for stock in stockInfo:
     }
   }
 
-  eval(signals["crossBelow"]["10"]["30"])
 
   # Start validations
 
-
+  # eval(signals["crossBelow"]["10"]["30"])
+  print type col1
 
 
   print(str(stock["stockName"]) + " %g seconds" % (time.time() - start_time2))
