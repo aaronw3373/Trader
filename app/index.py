@@ -147,7 +147,7 @@ def crossVarPercent(test, var):
       if pd.notnull(test[i]):
         res = 0
         if test[i] > var:
-            res = 1
+          res = 1
         array.append(res)
       else:
         array.append(0)
@@ -156,21 +156,40 @@ def crossVarPercent(test, var):
       if pd.notnull(test[i]):
         res = 0
         if test[i] < var:
-            res = 1
+          res = 1
         array.append(res)
       else:
         array.append(0)
   results = pd.Series(array, name=setColName())
   return results
 
-def highBtwDays(test, numDays, percent):
+def varRtnLimit(high, low, var):
   array = []
-  for i in range(0, len(test)):
+  if var >= 0:
+    for i in range(0, len(high)):
+      res = 0
+      if ((high[i]-low[i])/low[i]) > var:
+        res = 1
+      array.append(res)
+  if var < 0:
+    for i in range(0, len(high)):
+      res = 0
+      if ((high[i]-low[i])/low[i]) < var:
+        res = 1
+      array.append(res)
+  results = pd.Series(array, name=setColName())
+  return results
+
+
+
+def highBtwIDays(start, end, numDays, percent):
+  array = []
+  for i in range(0, len(start)):
     if i - numDays >= -1:
-      res = 1
+      res = 0
       for j in range(0,numDays):
-        if test[i] < test[i-j]:
-          res = 0
+        if ((end[i]-start[i])/start[i]) > percent:
+          res = 1
       array.append(res)
     else:
       array.append(0)
@@ -178,16 +197,70 @@ def highBtwDays(test, numDays, percent):
   return results
 
 
-def lowBtwDays(test, numDays, percent):
+def lowBtwIDays(start, end, numDays, percent):
   array = []
-  for i in range(0, len(test)):
+  for i in range(0, len(start)):
     if i - numDays >= -1:
-      res = 1
+      res = 0
       for j in range(0,numDays):
-        if test[i] > test[i-j]:
-          res = 0
+        if ((end[i]-start[i])/start[i]) < percent:
+          res = 1
       array.append(res)
     else:
       array.append(0)
   results = pd.Series(array, name=setColName())
   return results
+
+def highBtwEDays(start, end, numDays, percent):
+  array = []
+  for i in range(0, len(start)):
+    if i - numDays >= -1:
+      res = 0
+      for j in range(0,numDays):
+        if ((end[i]-start[i-1])/start[i-1]) > percent:
+          res = 1
+      array.append(res)
+    else:
+      array.append(0)
+  results = pd.Series(array, name=setColName())
+  return results
+
+
+def lowBtwEDays(start, end, numDays, percent):
+  array = []
+  for i in range(0, len(start)):
+    if i - numDays >= -1:
+      res = 0
+      for j in range(0,numDays):
+        if ((end[i]-start[i-1])/start[i-1]) < percent:
+          res = 1
+      array.append(res)
+    else:
+      array.append(0)
+  results = pd.Series(array, name=setColName())
+  return results
+
+def varDayRtn(test, numDays, percent):
+  test = numDayRtn(test, numDays)
+  array = []
+  if percent >= 0:
+    for i in range(0, len(test)):
+      if pd.notnull(test[i]):
+        res = 0
+        if test[i] > percent:
+          res = 1
+        array.append(res)
+      else:
+        array.append(0)
+  elif percent < 0:
+    for i in range(0, len(test)):
+      if pd.notnull(test[i]):
+        res = 0
+        if test[i] < percent:
+          res = 1
+        array.append(res)
+      else:
+        array.append(0)
+  results = pd.Series(array, name=setColName())
+  return results
+

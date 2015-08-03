@@ -23,7 +23,7 @@ varInputPercentIL = varsSheet.row_values(12)[5]
 varInputPercentEL = varsSheet.row_values(13)[5]
 varInputPercentDay = varsSheet.row_values(14)[5]
 varInputPercentNt = varsSheet.row_values(15)[5]
-# varInputNumDays = int(varsSheet.row_values(16)[4])
+varInputNumDays = int(varsSheet.row_values(16)[4])
 varInputPercentDays = varsSheet.row_values(16)[5]
 
 # GET INPUT FILE
@@ -58,7 +58,6 @@ def save_xls(list_dfs, xls_path):
     for n, df in enumerate(list_dfs):
         df.to_excel(writer,'sheet%s' % n, engine="openpyxl")
     writer.save()
-
 
 print("reading file into objects...")
 stockInfo = []
@@ -173,24 +172,30 @@ for stock in stockInfo:
   df = pd.concat([df, crossBelow(df[5], df[6])],axis=1)
 
   # variable signals
-  # 73-77
+  # 73-78
   df = pd.concat([df, crossVarPrice(df[1], varInputPrice1)],axis=1)
   df = pd.concat([df, crossVarPercent(df[10], varInputPercent2)],axis=1)
   df = pd.concat([df, crossVarPercent(df[11], varInputPercent3)],axis=1)
   df = pd.concat([df, crossVarPercent(df[12], varInputPercent5)],axis=1)
-  # NEED ONE DAY RETURN LIMIT
   df = pd.concat([df, crossVarPercent(df[15], varInputPercent1)],axis=1)
-  # 78-81
-  df = pd.concat([df, highBtwDays(df[1], varInputDayEH, varInputPercentEH)],axis=1)
-  df = pd.concat([df, highBtwDays(df[3], varInputDayIH, varInputPercentIH)],axis=1)
-  df = pd.concat([df, lowBtwDays(df[1], varInputDayEL, varInputPercentEL)],axis=1)
-  df = pd.concat([df, lowBtwDays(df[4], varInputDayIL, varInputPercentIL)],axis=1)
-  # 82-83
+  df = pd.concat([df, varRtnLimit(df[3], df[4],varInputPercent1Limit)], axis=1)
+  # 79-82
+  df = pd.concat([df, highBtwIDays(df[4], df[3], varInputDayEH, varInputPercentEH)],axis=1)
+  df = pd.concat([df, highBtwEDays(df[1], df[3], varInputDayIH, varInputPercentIH)],axis=1)
+  df = pd.concat([df, lowBtwIDays(df[4], df[3], varInputDayEL, varInputPercentEL)],axis=1)
+  df = pd.concat([df, lowBtwEDays(df[1], df[3], varInputDayIL, varInputPercentIL)],axis=1)
+  # # 83-85
   df = pd.concat([df, crossVarPercent(df[14], varInputPercentDay)],axis=1)
   df = pd.concat([df, crossVarPercent(df[13], varInputPercentNt)],axis=1)
+  df = pd.concat([df, varDayRtn(df[1], varInputNumDays,varInputPercentDays)],axis=1)
 
-  # varDayRtn(data1Rtn, int(varInput14))
+  # Start validations
 
+
+
+
+
+  finalTest1
 
 
   # print df.head(35)
