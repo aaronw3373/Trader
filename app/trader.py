@@ -1,3 +1,4 @@
+print("starting up...")
 import time
 start_time = time.time()
 from index import *
@@ -59,16 +60,17 @@ def save_xls(list_dfs, xls_path):
         df.to_excel(writer,'sheet%s' % n, engine="openpyxl")
     writer.save()
 
-print("reading file into objects...")
+print("reading file...")
+# read_time = time.time()
 stockInfo = []
 readFile()
-print("Read in time was %g seconds" % (time.time() - start_time))
+# print("Read in time was %g seconds" % (time.time() - read_time))
 
 print("starting calculations...")
 for stock in stockInfo:
   start_time2 = time.time()
   resetColName()
-
+#
   # Parse the data into a new DataFrame
   # 0-4 date, close, open, high, low
   df = sheetParser(inputDF,stock)
@@ -90,115 +92,133 @@ for stock in stockInfo:
   df = pd.concat([df, dayRtn(df[2], df[1])],axis=1)
   df = pd.concat([df, numDayRtn(df[1], 1)],axis=1)
 
-  # Start signals
-  # top line
-  # 16-21
-  df = pd.concat([df,topLine(df[1], [df[5],df[6],df[7],df[8],df[9]])], axis=1)
-  df = pd.concat([df,topLine(df[5], [df[1],df[6],df[7],df[8],df[9]])], axis=1)
-  df = pd.concat([df,topLine(df[6], [df[1],df[5],df[7],df[8],df[9]])], axis=1)
-  df = pd.concat([df,topLine(df[7], [df[1],df[5],df[6],df[8],df[9]])], axis=1)
-  df = pd.concat([df,topLine(df[8], [df[1],df[5],df[6],df[7],df[9]])], axis=1)
-  df = pd.concat([df,topLine(df[9], [df[1],df[5],df[6],df[7],df[8]])], axis=1)
 
-  # bottom line
-  # 22-27
-  df = pd.concat([df,bottomLine(df[1], [df[5],df[6],df[7],df[8],df[9]])], axis=1)
-  df = pd.concat([df,bottomLine(df[5], [df[1],df[6],df[7],df[8],df[9]])], axis=1)
-  df = pd.concat([df,bottomLine(df[6], [df[1],df[5],df[7],df[8],df[9]])], axis=1)
-  df = pd.concat([df,bottomLine(df[7], [df[1],df[5],df[6],df[8],df[9]])], axis=1)
-  df = pd.concat([df,bottomLine(df[8], [df[1],df[5],df[6],df[7],df[9]])], axis=1)
-  df = pd.concat([df,bottomLine(df[9], [df[1],df[5],df[6],df[7],df[8]])], axis=1)
+  # # Start signals
+  # # top line
+  # # 16-21
+  # df = pd.concat([df,topLine(df[1], [df[5],df[6],df[7],df[8],df[9]])], axis=1)
+  # df = pd.concat([df,topLine(df[5], [df[1],df[6],df[7],df[8],df[9]])], axis=1)
+  # df = pd.concat([df,topLine(df[6], [df[1],df[5],df[7],df[8],df[9]])], axis=1)
+  # df = pd.concat([df,topLine(df[7], [df[1],df[5],df[6],df[8],df[9]])], axis=1)
+  # df = pd.concat([df,topLine(df[8], [df[1],df[5],df[6],df[7],df[9]])], axis=1)
+  # df = pd.concat([df,topLine(df[9], [df[1],df[5],df[6],df[7],df[8]])], axis=1)
 
-  # price above
-  # 28-32
-  df = pd.concat([df, priceAbove(df[1], df[5])],axis=1)
-  df = pd.concat([df, priceAbove(df[1], df[6])],axis=1)
-  df = pd.concat([df, priceAbove(df[1], df[7])],axis=1)
-  df = pd.concat([df, priceAbove(df[1], df[8])],axis=1)
-  df = pd.concat([df, priceAbove(df[1], df[9])],axis=1)
+  # # bottom line
+  # # 22-27
+  # df = pd.concat([df,bottomLine(df[1], [df[5],df[6],df[7],df[8],df[9]])], axis=1)
+  # df = pd.concat([df,bottomLine(df[5], [df[1],df[6],df[7],df[8],df[9]])], axis=1)
+  # df = pd.concat([df,bottomLine(df[6], [df[1],df[5],df[7],df[8],df[9]])], axis=1)
+  # df = pd.concat([df,bottomLine(df[7], [df[1],df[5],df[6],df[8],df[9]])], axis=1)
+  # df = pd.concat([df,bottomLine(df[8], [df[1],df[5],df[6],df[7],df[9]])], axis=1)
+  # df = pd.concat([df,bottomLine(df[9], [df[1],df[5],df[6],df[7],df[8]])], axis=1)
 
-  # cross above
-  # 33-36
-  df = pd.concat([df, crossAbove(df[9], df[8])],axis=1)
-  df = pd.concat([df, crossAbove(df[9], df[7])],axis=1)
-  df = pd.concat([df, crossAbove(df[9], df[6])],axis=1)
-  df = pd.concat([df, crossAbove(df[9], df[5])],axis=1)
-  # 37-40
-  df = pd.concat([df, crossAbove(df[8], df[9])],axis=1)
-  df = pd.concat([df, crossAbove(df[8], df[7])],axis=1)
-  df = pd.concat([df, crossAbove(df[8], df[6])],axis=1)
-  df = pd.concat([df, crossAbove(df[8], df[5])],axis=1)
-  # 41-44
-  df = pd.concat([df, crossAbove(df[7], df[9])],axis=1)
-  df = pd.concat([df, crossAbove(df[7], df[8])],axis=1)
-  df = pd.concat([df, crossAbove(df[7], df[6])],axis=1)
-  df = pd.concat([df, crossAbove(df[7], df[5])],axis=1)
-  # 45-48
-  df = pd.concat([df, crossAbove(df[6], df[9])],axis=1)
-  df = pd.concat([df, crossAbove(df[6], df[8])],axis=1)
-  df = pd.concat([df, crossAbove(df[6], df[7])],axis=1)
-  df = pd.concat([df, crossAbove(df[6], df[5])],axis=1)
-  # 49-52
-  df = pd.concat([df, crossAbove(df[5], df[9])],axis=1)
-  df = pd.concat([df, crossAbove(df[5], df[8])],axis=1)
-  df = pd.concat([df, crossAbove(df[5], df[7])],axis=1)
-  df = pd.concat([df, crossAbove(df[5], df[6])],axis=1)
+  # # price above
+  # # 28-32
+  # df = pd.concat([df, priceAbove(df[1], df[5])],axis=1)
+  # df = pd.concat([df, priceAbove(df[1], df[6])],axis=1)
+  # df = pd.concat([df, priceAbove(df[1], df[7])],axis=1)
+  # df = pd.concat([df, priceAbove(df[1], df[8])],axis=1)
+  # df = pd.concat([df, priceAbove(df[1], df[9])],axis=1)
 
-  # cross below
-  # 53-56
-  df = pd.concat([df, crossBelow(df[9], df[8])],axis=1)
-  df = pd.concat([df, crossBelow(df[9], df[7])],axis=1)
-  df = pd.concat([df, crossBelow(df[9], df[6])],axis=1)
-  df = pd.concat([df, crossBelow(df[9], df[5])],axis=1)
-  # 57-60
-  df = pd.concat([df, crossBelow(df[8], df[9])],axis=1)
-  df = pd.concat([df, crossBelow(df[8], df[7])],axis=1)
-  df = pd.concat([df, crossBelow(df[8], df[6])],axis=1)
-  df = pd.concat([df, crossBelow(df[8], df[5])],axis=1)
-  # 61-64
-  df = pd.concat([df, crossBelow(df[7], df[9])],axis=1)
-  df = pd.concat([df, crossBelow(df[7], df[8])],axis=1)
-  df = pd.concat([df, crossBelow(df[7], df[6])],axis=1)
-  df = pd.concat([df, crossBelow(df[7], df[5])],axis=1)
-  # 65-68
-  df = pd.concat([df, crossBelow(df[6], df[9])],axis=1)
-  df = pd.concat([df, crossBelow(df[6], df[8])],axis=1)
-  df = pd.concat([df, crossBelow(df[6], df[7])],axis=1)
-  df = pd.concat([df, crossBelow(df[6], df[5])],axis=1)
-  # 69-72
-  df = pd.concat([df, crossBelow(df[5], df[9])],axis=1)
-  df = pd.concat([df, crossBelow(df[5], df[8])],axis=1)
-  df = pd.concat([df, crossBelow(df[5], df[7])],axis=1)
-  df = pd.concat([df, crossBelow(df[5], df[6])],axis=1)
+  # # cross above
+  # # 33-36
+  # df = pd.concat([df, crossAbove(df[9], df[8])],axis=1)
+  # df = pd.concat([df, crossAbove(df[9], df[7])],axis=1)
+  # df = pd.concat([df, crossAbove(df[9], df[6])],axis=1)
+  # df = pd.concat([df, crossAbove(df[9], df[5])],axis=1)
+  # # 37-40
+  # df = pd.concat([df, crossAbove(df[8], df[9])],axis=1)
+  # df = pd.concat([df, crossAbove(df[8], df[7])],axis=1)
+  # df = pd.concat([df, crossAbove(df[8], df[6])],axis=1)
+  # df = pd.concat([df, crossAbove(df[8], df[5])],axis=1)
+  # # 41-44
+  # df = pd.concat([df, crossAbove(df[7], df[9])],axis=1)
+  # df = pd.concat([df, crossAbove(df[7], df[8])],axis=1)
+  # df = pd.concat([df, crossAbove(df[7], df[6])],axis=1)
+  # df = pd.concat([df, crossAbove(df[7], df[5])],axis=1)
+  # # 45-48
+  # df = pd.concat([df, crossAbove(df[6], df[9])],axis=1)
+  # df = pd.concat([df, crossAbove(df[6], df[8])],axis=1)
+  # df = pd.concat([df, crossAbove(df[6], df[7])],axis=1)
+  # df = pd.concat([df, crossAbove(df[6], df[5])],axis=1)
+  # # 49-52
+  # df = pd.concat([df, crossAbove(df[5], df[9])],axis=1)
+  # df = pd.concat([df, crossAbove(df[5], df[8])],axis=1)
+  # df = pd.concat([df, crossAbove(df[5], df[7])],axis=1)
+  # df = pd.concat([df, crossAbove(df[5], df[6])],axis=1)
 
-  # variable signals
-  # 73-78
-  df = pd.concat([df, crossVarPrice(df[1], varInputPrice1)],axis=1)
-  df = pd.concat([df, crossVarPercent(df[10], varInputPercent2)],axis=1)
-  df = pd.concat([df, crossVarPercent(df[11], varInputPercent3)],axis=1)
-  df = pd.concat([df, crossVarPercent(df[12], varInputPercent5)],axis=1)
-  df = pd.concat([df, crossVarPercent(df[15], varInputPercent1)],axis=1)
-  df = pd.concat([df, varRtnLimit(df[3], df[4],varInputPercent1Limit)], axis=1)
-  # 79-82
-  df = pd.concat([df, highBtwIDays(df[4], df[3], varInputDayEH, varInputPercentEH)],axis=1)
-  df = pd.concat([df, highBtwEDays(df[1], df[3], varInputDayIH, varInputPercentIH)],axis=1)
-  df = pd.concat([df, lowBtwIDays(df[4], df[3], varInputDayEL, varInputPercentEL)],axis=1)
-  df = pd.concat([df, lowBtwEDays(df[1], df[3], varInputDayIL, varInputPercentIL)],axis=1)
+  # # cross below
+  # # 53-56
+  # df = pd.concat([df, crossBelow(df[9], df[8])],axis=1)
+  # df = pd.concat([df, crossBelow(df[9], df[7])],axis=1)
+  # df = pd.concat([df, crossBelow(df[9], df[6])],axis=1)
+  # df = pd.concat([df, crossBelow(df[9], df[5])],axis=1)
+  # # 57-60
+  # df = pd.concat([df, crossBelow(df[8], df[9])],axis=1)
+  # df = pd.concat([df, crossBelow(df[8], df[7])],axis=1)
+  # df = pd.concat([df, crossBelow(df[8], df[6])],axis=1)
+  # df = pd.concat([df, crossBelow(df[8], df[5])],axis=1)
+  # # 61-64
+  # df = pd.concat([df, crossBelow(df[7], df[9])],axis=1)
+  # df = pd.concat([df, crossBelow(df[7], df[8])],axis=1)
+  # df = pd.concat([df, crossBelow(df[7], df[6])],axis=1)
+  # df = pd.concat([df, crossBelow(df[7], df[5])],axis=1)
+  # # 65-68
+  # df = pd.concat([df, crossBelow(df[6], df[9])],axis=1)
+  # df = pd.concat([df, crossBelow(df[6], df[8])],axis=1)
+  # df = pd.concat([df, crossBelow(df[6], df[7])],axis=1)
+  # df = pd.concat([df, crossBelow(df[6], df[5])],axis=1)
+  # # 69-72
+  # df = pd.concat([df, crossBelow(df[5], df[9])],axis=1)
+  # df = pd.concat([df, crossBelow(df[5], df[8])],axis=1)
+  # df = pd.concat([df, crossBelow(df[5], df[7])],axis=1)
+  # df = pd.concat([df, crossBelow(df[5], df[6])],axis=1)
+
+  # # variable signals
+  # # 73-78
+  # df = pd.concat([df, crossVarPrice(df[1], varInputPrice1)],axis=1)
+  # df = pd.concat([df, crossVarPercent(df[10], varInputPercent2)],axis=1)
+  # df = pd.concat([df, crossVarPercent(df[11], varInputPercent3)],axis=1)
+  # df = pd.concat([df, crossVarPercent(df[12], varInputPercent5)],axis=1)
+  # df = pd.concat([df, crossVarPercent(df[15], varInputPercent1)],axis=1)
+  # df = pd.concat([df, varRtnLimit(df[3], df[4],varInputPercent1Limit)], axis=1)
+  # # 79-82
+  # df = pd.concat([df, highBtwIDays(df[4], df[3], varInputDayEH, varInputPercentEH)],axis=1)
+  # df = pd.concat([df, highBtwEDays(df[1], df[3], varInputDayIH, varInputPercentIH)],axis=1)
+  # df = pd.concat([df, lowBtwIDays(df[4], df[3], varInputDayEL, varInputPercentEL)],axis=1)
+  # df = pd.concat([df, lowBtwEDays(df[1], df[3], varInputDayIL, varInputPercentIL)],axis=1)
   # # 83-85
-  df = pd.concat([df, crossVarPercent(df[14], varInputPercentDay)],axis=1)
-  df = pd.concat([df, crossVarPercent(df[13], varInputPercentNt)],axis=1)
-  df = pd.concat([df, varDayRtn(df[1], varInputNumDays,varInputPercentDays)],axis=1)
+  # df = pd.concat([df, crossVarPercent(df[14], varInputPercentDay)],axis=1)
+  # df = pd.concat([df, crossVarPercent(df[13], varInputPercentNt)],axis=1)
+  # df = pd.concat([df, varDayRtn(df[1], varInputNumDays,varInputPercentDays)],axis=1)
+
+  signals = {
+    "topLine": {
+      "close": "topLine(df[1], [df[5],df[6],df[7],df[8],df[9]])",
+      "200": "topLine(df[5], [df[1],df[6],df[7],df[8],df[9]])",
+      "100": "topLine(df[6], [df[1],df[5],df[7],df[8],df[9]])",
+      "50": "topLine(df[7], [df[1],df[5],df[6],df[8],df[9]])",
+      "30": "topLine(df[8], [df[1],df[5],df[6],df[7],df[9]])",
+      "10": "topLine(df[9], [df[1],df[5],df[6],df[7],df[8]])"
+    },
+    "bottomLine":{
+      "close": "bottomLine(df[1], [df[5],df[6],df[7],df[8],df[9]])",
+      "200": "bottomLine(df[5], [df[1],df[6],df[7],df[8],df[9]])",
+      "100": "bottomLine(df[6], [df[1],df[5],df[7],df[8],df[9]])",
+      "50": "bottomLine(df[7], [df[1],df[5],df[6],df[8],df[9]])",
+      "30": "bottomLine(df[8], [df[1],df[5],df[6],df[7],df[9]])",
+      "10": "bottomLine(df[9], [df[1],df[5],df[6],df[7],df[8]])"
+    }
+  }
+
+  top10 = eval(signals["topLine"]["10"])
+  print top10
 
   # Start validations
 
 
 
 
-
-  finalTest1
-
-
-  # print df.head(35)
   print(str(stock["stockName"]) + " %g seconds" % (time.time() - start_time2))
 
   # save_xls([df],"end_model.xlsx")
