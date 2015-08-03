@@ -77,11 +77,11 @@ for stock in stockInfo:
 
   # Get moving averages over x numver of days
   # 5-9
-  df =  pd.concat([df, numDayAvg(df[1], 200)],axis=1)
-  df =  pd.concat([df, numDayAvg(df[1], 100)],axis=1)
-  df =  pd.concat([df, numDayAvg(df[1], 50)],axis=1)
-  df =  pd.concat([df, numDayAvg(df[1], 30)],axis=1)
-  df =  pd.concat([df, numDayAvg(df[1], 10)],axis=1)
+  df = pd.concat([df, numDayAvg(df[1], 200)],axis=1)
+  df = pd.concat([df, numDayAvg(df[1], 100)],axis=1)
+  df = pd.concat([df, numDayAvg(df[1], 50)],axis=1)
+  df = pd.concat([df, numDayAvg(df[1], 30)],axis=1)
+  df = pd.concat([df, numDayAvg(df[1], 10)],axis=1)
 
   # Get percent return over number of days
   # 10 -15
@@ -91,106 +91,6 @@ for stock in stockInfo:
   df = pd.concat([df, nightRtn(df[1], df[2])],axis=1)
   df = pd.concat([df, dayRtn(df[2], df[1])],axis=1)
   df = pd.concat([df, numDayRtn(df[1], 1)],axis=1)
-
-
-  # # Start signals
-  # # top line
-  # # 16-21
-  # df = pd.concat([df,topLine(df[1], [df[5],df[6],df[7],df[8],df[9]])], axis=1)
-  # df = pd.concat([df,topLine(df[5], [df[1],df[6],df[7],df[8],df[9]])], axis=1)
-  # df = pd.concat([df,topLine(df[6], [df[1],df[5],df[7],df[8],df[9]])], axis=1)
-  # df = pd.concat([df,topLine(df[7], [df[1],df[5],df[6],df[8],df[9]])], axis=1)
-  # df = pd.concat([df,topLine(df[8], [df[1],df[5],df[6],df[7],df[9]])], axis=1)
-  # df = pd.concat([df,topLine(df[9], [df[1],df[5],df[6],df[7],df[8]])], axis=1)
-
-  # # bottom line
-  # # 22-27
-  # df = pd.concat([df,bottomLine(df[1], [df[5],df[6],df[7],df[8],df[9]])], axis=1)
-  # df = pd.concat([df,bottomLine(df[5], [df[1],df[6],df[7],df[8],df[9]])], axis=1)
-  # df = pd.concat([df,bottomLine(df[6], [df[1],df[5],df[7],df[8],df[9]])], axis=1)
-  # df = pd.concat([df,bottomLine(df[7], [df[1],df[5],df[6],df[8],df[9]])], axis=1)
-  # df = pd.concat([df,bottomLine(df[8], [df[1],df[5],df[6],df[7],df[9]])], axis=1)
-  # df = pd.concat([df,bottomLine(df[9], [df[1],df[5],df[6],df[7],df[8]])], axis=1)
-
-  # # price above
-  # # 28-32
-  # df = pd.concat([df, priceAbove(df[1], df[5])],axis=1)
-  # df = pd.concat([df, priceAbove(df[1], df[6])],axis=1)
-  # df = pd.concat([df, priceAbove(df[1], df[7])],axis=1)
-  # df = pd.concat([df, priceAbove(df[1], df[8])],axis=1)
-  # df = pd.concat([df, priceAbove(df[1], df[9])],axis=1)
-
-  # # cross above
-  # # 33-36
-  # df = pd.concat([df, crossAbove(df[9], df[8])],axis=1)
-  # df = pd.concat([df, crossAbove(df[9], df[7])],axis=1)
-  # df = pd.concat([df, crossAbove(df[9], df[6])],axis=1)
-  # df = pd.concat([df, crossAbove(df[9], df[5])],axis=1)
-  # # 37-40
-  # df = pd.concat([df, crossAbove(df[8], df[9])],axis=1)
-  # df = pd.concat([df, crossAbove(df[8], df[7])],axis=1)
-  # df = pd.concat([df, crossAbove(df[8], df[6])],axis=1)
-  # df = pd.concat([df, crossAbove(df[8], df[5])],axis=1)
-  # # 41-44
-  # df = pd.concat([df, crossAbove(df[7], df[9])],axis=1)
-  # df = pd.concat([df, crossAbove(df[7], df[8])],axis=1)
-  # df = pd.concat([df, crossAbove(df[7], df[6])],axis=1)
-  # df = pd.concat([df, crossAbove(df[7], df[5])],axis=1)
-  # # 45-48
-  # df = pd.concat([df, crossAbove(df[6], df[9])],axis=1)
-  # df = pd.concat([df, crossAbove(df[6], df[8])],axis=1)
-  # df = pd.concat([df, crossAbove(df[6], df[7])],axis=1)
-  # df = pd.concat([df, crossAbove(df[6], df[5])],axis=1)
-  # # 49-52
-  # df = pd.concat([df, crossAbove(df[5], df[9])],axis=1)
-  # df = pd.concat([df, crossAbove(df[5], df[8])],axis=1)
-  # df = pd.concat([df, crossAbove(df[5], df[7])],axis=1)
-  # df = pd.concat([df, crossAbove(df[5], df[6])],axis=1)
-
-  # # cross below
-  # # 53-56
-  # df = pd.concat([df, crossBelow(df[9], df[8])],axis=1)
-  # df = pd.concat([df, crossBelow(df[9], df[7])],axis=1)
-  # df = pd.concat([df, crossBelow(df[9], df[6])],axis=1)
-  # df = pd.concat([df, crossBelow(df[9], df[5])],axis=1)
-  # # 57-60
-  # df = pd.concat([df, crossBelow(df[8], df[9])],axis=1)
-  # df = pd.concat([df, crossBelow(df[8], df[7])],axis=1)
-  # df = pd.concat([df, crossBelow(df[8], df[6])],axis=1)
-  # df = pd.concat([df, crossBelow(df[8], df[5])],axis=1)
-  # # 61-64
-  # df = pd.concat([df, crossBelow(df[7], df[9])],axis=1)
-  # df = pd.concat([df, crossBelow(df[7], df[8])],axis=1)
-  # df = pd.concat([df, crossBelow(df[7], df[6])],axis=1)
-  # df = pd.concat([df, crossBelow(df[7], df[5])],axis=1)
-  # # 65-68
-  # df = pd.concat([df, crossBelow(df[6], df[9])],axis=1)
-  # df = pd.concat([df, crossBelow(df[6], df[8])],axis=1)
-  # df = pd.concat([df, crossBelow(df[6], df[7])],axis=1)
-  # df = pd.concat([df, crossBelow(df[6], df[5])],axis=1)
-  # # 69-72
-  # df = pd.concat([df, crossBelow(df[5], df[9])],axis=1)
-  # df = pd.concat([df, crossBelow(df[5], df[8])],axis=1)
-  # df = pd.concat([df, crossBelow(df[5], df[7])],axis=1)
-  # df = pd.concat([df, crossBelow(df[5], df[6])],axis=1)
-
-  # # variable signals
-  # # 73-78
-  # df = pd.concat([df, crossVarPrice(df[1], varInputPrice1)],axis=1)
-  # df = pd.concat([df, crossVarPercent(df[10], varInputPercent2)],axis=1)
-  # df = pd.concat([df, crossVarPercent(df[11], varInputPercent3)],axis=1)
-  # df = pd.concat([df, crossVarPercent(df[12], varInputPercent5)],axis=1)
-  # df = pd.concat([df, crossVarPercent(df[15], varInputPercent1)],axis=1)
-  # df = pd.concat([df, varRtnLimit(df[3], df[4],varInputPercent1Limit)], axis=1)
-  # # 79-82
-  # df = pd.concat([df, highBtwIDays(df[4], df[3], varInputDayEH, varInputPercentEH)],axis=1)
-  # df = pd.concat([df, highBtwEDays(df[1], df[3], varInputDayIH, varInputPercentIH)],axis=1)
-  # df = pd.concat([df, lowBtwIDays(df[4], df[3], varInputDayEL, varInputPercentEL)],axis=1)
-  # df = pd.concat([df, lowBtwEDays(df[1], df[3], varInputDayIL, varInputPercentIL)],axis=1)
-  # # 83-85
-  # df = pd.concat([df, crossVarPercent(df[14], varInputPercentDay)],axis=1)
-  # df = pd.concat([df, crossVarPercent(df[13], varInputPercentNt)],axis=1)
-  # df = pd.concat([df, varDayRtn(df[1], varInputNumDays,varInputPercentDays)],axis=1)
 
   signals = {
     "topLine": {
@@ -208,11 +108,102 @@ for stock in stockInfo:
       "50": "bottomLine(df[7], [df[1],df[5],df[6],df[8],df[9]])",
       "30": "bottomLine(df[8], [df[1],df[5],df[6],df[7],df[9]])",
       "10": "bottomLine(df[9], [df[1],df[5],df[6],df[7],df[8]])"
+    },
+    "priceAbove":{
+      "200": "priceAbove(df[1], df[5])",
+      "100": "priceAbove(df[1], df[6])",
+      "50": "priceAbove(df[1], df[7])",
+      "30": "priceAbove(df[1], df[8])",
+      "10": "priceAbove(df[1], df[9])"
+    },
+    "crossAbove":{
+      "10": {
+        "30": "crossAbove(df[9], df[8])",
+        "50": "crossAbove(df[9], df[7])",
+        "100": "crossAbove(df[9], df[6])",
+        "200": "crossAbove(df[9], df[5])"
+      },
+      "30": {
+        "10": "crossAbove(df[8], df[9])",
+        "50": "crossAbove(df[8], df[7])",
+        "100": "crossAbove(df[8], df[6])",
+        "200": "crossAbove(df[8], df[5])"
+      },
+      "50": {
+        "10": "crossAbove(df[7], df[9])",
+        "30": "crossAbove(df[7], df[8])",
+        "100": "crossAbove(df[7], df[6])",
+        "200": "crossAbove(df[7], df[5])"
+      },
+      "100": {
+        "10": "crossAbove(df[6], df[9])",
+        "30": "crossAbove(df[6], df[8])",
+        "50": "crossAbove(df[6], df[7])",
+        "200": "crossAbove(df[6], df[5])"
+      },
+      "200": {
+        "10": "crossAbove(df[5], df[9])",
+        "30": "crossAbove(df[5], df[8])",
+        "50": "crossAbove(df[5], df[7])",
+        "100": "crossAbove(df[5], df[6])"
+      }
+    },
+    "crossBelow":{
+      "10": {
+        "30": "crossBelow(df[9], df[8])",
+        "50": "crossBelow(df[9], df[7])",
+        "100": "crossBelow(df[9], df[6])",
+        "200": "crossBelow(df[9], df[5])"
+      },
+      "30": {
+        "10": "crossBelow(df[8], df[9])",
+        "50": "crossBelow(df[8], df[7])",
+        "100": "crossBelow(df[8], df[6])",
+        "200": "crossBelow(df[8], df[5])"
+      },
+      "50": {
+        "10": "crossBelow(df[7], df[9])",
+        "30": "crossBelow(df[7], df[8])",
+        "100": "crossBelow(df[7], df[6])",
+        "200": "crossBelow(df[7], df[5])"
+      },
+      "100": {
+        "10": "crossBelow(df[6], df[9])",
+        "30": "crossBelow(df[6], df[8])",
+        "50": "crossBelow(df[6], df[7])",
+        "200": "crossBelow(df[6], df[5])"
+      },
+      "200": {
+        "10": "crossBelow(df[5], df[9])",
+        "30": "crossBelow(df[5], df[8])",
+        "50": "crossBelow(df[5], df[7])",
+        "100": "crossBelow(df[5], df[6])"
+      }
+    },
+    "variable":{
+      "crossPrice": "crossVarPrice(df[1], varInputPrice1)",
+      "crossPercent": {
+        "2": "crossVarPercent(df[10], varInputPercent2)",
+        "3": "crossVarPercent(df[11], varInputPercent3)",
+        "5": "crossVarPercent(df[12], varInputPercent5)",
+        "1": "crossVarPercent(df[15], varInputPercent1)",
+        "day": "crossVarPercent(df[14], varInputPercentDay)",
+        "night": "crossVarPercent(df[13], varInputPercentNt)"
+      },
+      "high": {
+        "interday": "highBtwIDays(df[1], df[3], varInputDayIH, varInputPercentIH)",
+        "endDay": "highBtwEDays(df[4], df[3], varInputDayEH, varInputPercentEH)"
+      },
+      "low": {
+        "interday": "lowBtwIDays(df[1], df[3], varInputDayIL, varInputPercentIL)",
+        "endDay": "lowBtwEDays(df[4], df[3], varInputDayEL, varInputPercentEL)"
+      },
+      "returnLimit": "varRtnLimit(df[3], df[4],varInputPercent1Limit)",
+      "dayReturn": "varDayRtn(df[1], varInputNumDays,varInputPercentDays)"
     }
   }
 
-  top10 = eval(signals["topLine"]["10"])
-  print top10
+  eval(signals["crossBelow"]["10"]["30"])
 
   # Start validations
 
