@@ -74,6 +74,28 @@ col7sig3 = varsSheet.row_values(34)[5]
 col8sig3 = varsSheet.row_values(35)[5]
 col9sig3 = varsSheet.row_values(36)[5]
 
+col0sig4 = varsSheet.row_values(27)[6]
+col1sig4 = varsSheet.row_values(28)[6]
+col2sig4 = varsSheet.row_values(29)[6]
+col3sig4 = varsSheet.row_values(30)[6]
+col4sig4 = varsSheet.row_values(31)[6]
+col5sig4 = varsSheet.row_values(32)[6]
+col6sig4 = varsSheet.row_values(33)[6]
+col7sig4 = varsSheet.row_values(34)[6]
+col8sig4 = varsSheet.row_values(35)[6]
+col9sig4 = varsSheet.row_values(36)[6]
+
+col0sig5 = varsSheet.row_values(27)[7]
+col1sig5 = varsSheet.row_values(28)[7]
+col2sig5 = varsSheet.row_values(29)[7]
+col3sig5 = varsSheet.row_values(30)[7]
+col4sig5 = varsSheet.row_values(31)[7]
+col5sig5 = varsSheet.row_values(32)[7]
+col6sig5 = varsSheet.row_values(33)[7]
+col7sig5 = varsSheet.row_values(34)[7]
+col8sig5 = varsSheet.row_values(35)[7]
+col9sig5 = varsSheet.row_values(36)[7]
+
 
 # GET INPUT FILE
 inputDF = pd.read_excel(sys.argv[1])
@@ -127,7 +149,7 @@ def strParserEval(input):
   else:
     return res
 
-def makeCol(opp, sig1, sig2, sig3):
+def makeCol(opp, sig1, sig2, sig3, sig4, sig5):
   array = []
   numTrue = 0
   numSigs = 0
@@ -145,6 +167,16 @@ def makeCol(opp, sig1, sig2, sig3):
     numSigs +=1
     sig3 = strParserEval(sig3)
     if type(sig3) == str:
+      return None
+  if sig4:
+    numSigs +=1
+    sig4 = strParserEval(sig4)
+    if type(sig4) == str:
+      return None
+  if sig5:
+    numSigs +=1
+    sig5 = strParserEval(sig5)
+    if type(sig5) == str:
       return None
 
   if opp == "none":
@@ -173,6 +205,20 @@ def makeCol(opp, sig1, sig2, sig3):
           numTrue += 1
         else:
           array.append(0)
+    elif numSigs == 4:
+      for i in range(0, len(sig1)):
+        if sig1[i] + sig2[i] + sig3[i] + sig4[i] == 4:
+          array.append(1)
+          numTrue += 1
+        else:
+          array.append(0)
+    elif numSigs == 5:
+      for i in range(0, len(sig1)):
+        if sig1[i] + sig2[i] + sig3[i] + sig4[i] + sig5[i]== 5:
+          array.append(1)
+          numTrue += 1
+        else:
+          array.append(0)
     else:
       print("invalid sigs: and", numSigs)
       return None
@@ -187,6 +233,20 @@ def makeCol(opp, sig1, sig2, sig3):
     elif numSigs == 3:
       for i in range(0, len(sig1)):
         if sig1[i] + sig2[i] + sig3[i] >= 1:
+          array.append(1)
+          numTrue += 1
+        else:
+          array.append(0)
+    elif numSigs == 4:
+      for i in range(0, len(sig1)):
+        if sig1[i] + sig2[i] + sig3[i] + sig4[i] >= 1:
+          array.append(1)
+          numTrue += 1
+        else:
+          array.append(0)
+    elif numSigs == 5:
+      for i in range(0, len(sig1)):
+        if sig1[i] + sig2[i] + sig3[i] + sig4[i] + sig5[i] >= 1:
           array.append(1)
           numTrue += 1
         else:
@@ -442,16 +502,16 @@ for stock in stockInfo:
 
   # Section 3
   # Asign Columns
-  makeColsArr = ["makeCol(col0opp,col0sig1,col0sig2,col0sig3)",
-  "makeCol(col1opp,col1sig1,col1sig2,col1sig3)",
-  "makeCol(col2opp,col2sig1,col2sig2,col2sig3)",
-  "makeCol(col3opp,col3sig1,col3sig2,col3sig3)",
-  "makeCol(col4opp,col4sig1,col4sig2,col4sig3)",
-  "makeCol(col5opp,col5sig1,col5sig2,col5sig3)",
-  "makeCol(col6opp,col6sig1,col6sig2,col6sig3)",
-  "makeCol(col7opp,col7sig1,col7sig2,col7sig3)",
-  "makeCol(col8opp,col8sig1,col8sig2,col8sig3)",
-  "makeCol(col9opp,col9sig1,col9sig2,col9sig3)"]
+  makeColsArr = ["makeCol(col0opp,col0sig1,col0sig2,col0sig3,col0sig4,col1sig5)",
+  "makeCol(col1opp,col1sig1,col1sig2,col1sig3,col1sig4,col1sig5)",
+  "makeCol(col2opp,col2sig1,col2sig2,col2sig3,col2sig4,col2sig5)",
+  "makeCol(col3opp,col3sig1,col3sig2,col3sig3,col3sig4,col3sig5)",
+  "makeCol(col4opp,col4sig1,col4sig2,col4sig3,col4sig4,col4sig5)",
+  "makeCol(col5opp,col5sig1,col5sig2,col5sig3,col5sig4,col5sig5)",
+  "makeCol(col6opp,col6sig1,col6sig2,col6sig3,col6sig4,col6sig5)",
+  "makeCol(col7opp,col7sig1,col7sig2,col7sig3,col7sig4,col7sig5)",
+  "makeCol(col8opp,col8sig1,col8sig2,col8sig3,col8sig4,col8sig5)",
+  "makeCol(col9opp,col9sig1,col9sig2,col9sig3,col9sig4,col9sig5)"]
 
   col0 = canMakeCol(0)
   col1 = canMakeCol(1)
