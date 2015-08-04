@@ -12,6 +12,12 @@ def resetColName():
   global colName
   colName = -1
 
+resName = -1
+def setResName():
+  global resName
+  resName +=1
+  return resName
+
 # move data from input dataframe to organized stock dataframe
 def sheetParser(input, stock):
   newFrame = pd.DataFrame({

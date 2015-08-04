@@ -98,6 +98,7 @@ col9sig5 = varsSheet.row_values(36)[7]
 
 # final test input
 #  opp, if sum(number),  col+days prior* 10,
+# final test 1
 test1part1opp = varsSheet.row_values(44)[2]
 test1part1sum = varsSheet.row_values(44)[3]
 test1part1col0 = varsSheet.row_values(44)[4]
@@ -137,6 +138,47 @@ test1part3col7 = varsSheet.row_values(46)[11]
 test1part3col8 = varsSheet.row_values(46)[12]
 test1part3col9 = varsSheet.row_values(46)[13]
 
+# final test 2
+test2part1opp = varsSheet.row_values(53)[2]
+test2part1sum = varsSheet.row_values(53)[3]
+test2part1col0 = varsSheet.row_values(53)[4]
+test2part1col1 = varsSheet.row_values(53)[5]
+test2part1col2 = varsSheet.row_values(53)[6]
+test2part1col3 = varsSheet.row_values(53)[7]
+test2part1col4 = varsSheet.row_values(53)[8]
+test2part1col5 = varsSheet.row_values(53)[9]
+test2part1col6 = varsSheet.row_values(53)[10]
+test2part1col7 = varsSheet.row_values(53)[11]
+test2part1col8 = varsSheet.row_values(53)[12]
+test2part1col9 = varsSheet.row_values(53)[13]
+
+test2part2opp = varsSheet.row_values(54)[2]
+test2part2sum = varsSheet.row_values(54)[3]
+test2part2col0 = varsSheet.row_values(54)[4]
+test2part2col1 = varsSheet.row_values(54)[5]
+test2part2col2 = varsSheet.row_values(54)[6]
+test2part2col3 = varsSheet.row_values(54)[7]
+test2part2col4 = varsSheet.row_values(54)[8]
+test2part2col5 = varsSheet.row_values(54)[9]
+test2part2col6 = varsSheet.row_values(54)[10]
+test2part2col7 = varsSheet.row_values(54)[11]
+test2part2col8 = varsSheet.row_values(54)[12]
+test2part2col9 = varsSheet.row_values(54)[13]
+
+test2part3opp = varsSheet.row_values(55)[2]
+test2part3sum = varsSheet.row_values(55)[3]
+test2part3col0 = varsSheet.row_values(55)[4]
+test2part3col1 = varsSheet.row_values(55)[5]
+test2part3col2 = varsSheet.row_values(55)[6]
+test2part3col3 = varsSheet.row_values(55)[7]
+test2part3col4 = varsSheet.row_values(55)[8]
+test2part3col5 = varsSheet.row_values(55)[9]
+test2part3col6 = varsSheet.row_values(55)[10]
+test2part3col7 = varsSheet.row_values(55)[11]
+test2part3col8 = varsSheet.row_values(55)[12]
+test2part3col9 = varsSheet.row_values(55)[13]
+
+finalReturnDays = int(varsSheet.row_values(59)[3])
 # GET INPUT FILE
 inputDF = pd.read_excel(sys.argv[1])
 
@@ -335,10 +377,12 @@ def finalTestParams(testNum, partNum):
       sumNum = len(testCols)
     elif opp == "or":
       sumNum = 1
+    else:
+      sumNum = 1
     colArr = []
     for i in range(0, numCols):
       colArr.append({
-        "data": eval(testCols[i].split()[0]),
+        "data": eval(testCols[i].split()[0].lower()),
         "daysPrior": eval(testCols[i].split()[1])
         })
     return colArr, sumNum, numCols
@@ -364,7 +408,46 @@ def finalTestPart(testNum, partNum):
     for k in range(0, len(array)):
       if array[k] == 1:
         num += 1
-    return array, num
+    return array
+
+def finalTest1():
+    numTests = 0
+    for n in range(0, 7):
+      if varsSheet.row_values(44 + n)[2]:
+        numTests += 1
+    resArray = []
+    tests = []
+    for j in range(1, numTests+1):
+      tests.append(finalTestPart(1, j))
+    for i in range(0, len(tests[0])):
+      res = 0
+      for k in range(0, numTests):
+        if tests[k][i] == 1:
+          res = 1
+      resArray.append(res)
+    result = pd.Series(resArray, name=setColName())
+    return resArray,result
+
+def finalTest2(final1):
+    numTests = 0
+    for n in range(0, 5):
+      if varsSheet.row_values(53 + n)[2]:
+        numTests += 1
+    resArray = []
+    tests = []
+    for j in range(1, numTests+1):
+      tests.append(finalTestPart(2, j))
+    for i in range(0, len(tests[0])):
+      res = 0
+      for k in range(0, numTests):
+        if tests[k][i] == 1:
+          res = 1
+      if res == 1 and final1[i] == 1:
+        resArray.append(res)
+      else:
+        resArray.append(0)
+    result = pd.Series(resArray, name=setColName())
+    return result
 
 makeColsArr = ["makeCol(col0opp,col0sig1,col0sig2,col0sig3,col0sig4,col1sig5)",
   "makeCol(col1opp,col1sig1,col1sig2,col1sig3,col1sig4,col1sig5)",
@@ -579,6 +662,8 @@ readFile()
 #
 # FOR EACH STOCK
 #
+
+resultsFrame = pd.DataFrame()
 print("starting calculations...")
 for stock in stockInfo:
   start_time2 = time.time()
@@ -621,28 +706,42 @@ for stock in stockInfo:
 
   numCol = findNumCol()
 
+  def totRtn(rtn):
+    res = 0
+    for i in range(0, len(rtn)):
+      if pd.notnull(rtn[i]):
+        res += rtn[i]
+    print res
+    return res
 
+  def calcRtns(final2, rtn1, numDays):
+    array = []
+    for i in range(0, len(final2)):
+      if final2[i] == 1:
+        rtn = 0
+        for j in range(1, numDays+1):
+          if (i + j) < len(rtn1):
+            rtn += rtn1[i + j]
+        array.append(rtn)
+      else:
+        array.append(None)
+
+    result = pd.Series(array, name=setResName())
+    print totRtn(array)
+    return result
 
   # run final tests
-  print finalTestPart(1,1)[1]
+  final1 = finalTest1()
+  df = pd.concat([df, final1[1]],axis=1)
 
-  # def finalTest1():
-  #   array = []
-  #   for i in range(0, len(col0)):
-  #     if finalT1P1(i) == 1 or finalT1P2(i) == 1 or finalT1P3(i) == 1:
-  #       array.append(1)
-  #     else:
-  #       array.append(0)
-  #   result = pd.Series(array, name=setColName())
-  #   return result
+  final2 = finalTest2(final1[0])
+  df = pd.concat([df, final2],axis=1)
 
-  # final1 = finalTest1()
+  resReturns = calcRtns(final2, df[15], finalReturnDays)
+  df = pd.concat([df, resReturns],axis=1)
+  resultsFrame = pd.concat([resultsFrame,resReturns], axis=1)
 
-
-
-
-
-
+  # totRtn(resReturns)
 
 
   print(str(stock["stockName"]) + " %g seconds" % (time.time() - start_time2))
@@ -651,4 +750,4 @@ for stock in stockInfo:
 
 print("Total Elapsed time was %g seconds" % (time.time() - start_time))
 # save sheet
-# save_xls([], results.xlsx)
+save_xls([resultsFrame], "results.xlsx")
