@@ -98,6 +98,19 @@ def priceAbove(test, other):
   results = pd.Series(array, name=setColName())
   return results
 
+def priceAbove(test, other):
+  array = []
+  for i in range(0, len(test)):
+    if pd.notnull(other[i]):
+      res = 0
+      if test[i] < other[i]:
+        res = 1
+      array.append(res)
+    else:
+      array.append(0)
+  results = pd.Series(array, name=setColName())
+  return results
+
 def crossAbove(test, other):
   array = []
   for i in range(0, len(test)):

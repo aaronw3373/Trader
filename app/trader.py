@@ -26,7 +26,17 @@ varInputPercentDay = varsSheet.row_values(14)[5]
 varInputPercentNt = varsSheet.row_values(15)[5]
 varInputNumDays = int(varsSheet.row_values(16)[4])
 varInputPercentDays = varsSheet.row_values(16)[5]
+
 col1 = varsSheet.row_values(27)[2]
+col2 = varsSheet.row_values(28)[2]
+col3 = varsSheet.row_values(29)[2]
+col4 = varsSheet.row_values(30)[2]
+col5 = varsSheet.row_values(31)[2]
+col6 = varsSheet.row_values(32)[2]
+col7 = varsSheet.row_values(33)[2]
+col8 = varsSheet.row_values(34)[2]
+col9= varsSheet.row_values(35)[2]
+col10 = varsSheet.row_values(36)[2]
 
 # GET INPUT FILE
 inputDF = pd.read_excel(sys.argv[1])
@@ -111,11 +121,92 @@ for stock in stockInfo:
       "10": "bottomLine(df[9], [df[1],df[5],df[6],df[7],df[8]])"
     },
     "priceAbove":{
-      "200": "priceAbove(df[1], df[5])",
-      "100": "priceAbove(df[1], df[6])",
-      "50": "priceAbove(df[1], df[7])",
-      "30": "priceAbove(df[1], df[8])",
-      "10": "priceAbove(df[1], df[9])"
+      "close": {
+        "200": "priceAbove(df[1], df[5])",
+        "100": "priceAbove(df[1], df[6])",
+        "50": "priceAbove(df[1], df[7])",
+        "30": "priceAbove(df[1], df[8])",
+        "10": "priceAbove(df[1], df[9])"
+      },
+      "10": {
+        "close": "priceAbove(df[9], df[1])",
+        "30": "priceAbove(df[9], df[8])",
+        "50": "priceAbove(df[9], df[7])",
+        "100": "priceAbove(df[9], df[6])",
+        "200": "priceAbove(df[9], df[5])"
+      },
+      "30": {
+        "close": "priceAbove(df[8], df[1])",
+        "10": "priceAbove(df[8], df[9])",
+        "50": "priceAbove(df[8], df[7])",
+        "100": "priceAbove(df[8], df[6])",
+        "200": "priceAbove(df[8], df[5])"
+      },
+      "50": {
+        "close": "priceAbove(df[7], df[1])",
+        "10": "priceAbove(df[7], df[9])",
+        "30": "priceAbove(df[7], df[8])",
+        "100": "priceAbove(df[7], df[6])",
+        "200": "priceAbove(df[7], df[5])"
+      },
+      "100": {
+        "close": "priceAbove(df[6], df[1])",
+        "10": "priceAbove(df[6], df[9])",
+        "30": "priceAbove(df[6], df[8])",
+        "50": "priceAbove(df[6], df[7])",
+        "200": "priceAbove(df[6], df[5])"
+      },
+      "200": {
+        "close": "priceAbove(df[5], df[1])",
+        "10": "priceAbove(df[5], df[9])",
+        "30": "priceAbove(df[5], df[8])",
+        "50": "priceAbove(df[5], df[7])",
+        "100": "priceAbove(df[5], df[6])"
+      }
+    },
+    "priceBelow":{
+      "close": {
+        "200": "priceBelow(df[1], df[5])",
+        "100": "priceBelow(df[1], df[6])",
+        "50": "priceBelow(df[1], df[7])",
+        "30": "priceBelow(df[1], df[8])",
+        "10": "priceBelow(df[1], df[9])"
+      },
+      "10": {
+        "close": "priceBelow(df[9], df[1])",
+        "30": "priceBelow(df[9], df[8])",
+        "50": "priceBelow(df[9], df[7])",
+        "100": "priceBelow(df[9], df[6])",
+        "200": "priceBelow(df[9], df[5])"
+      },
+      "30": {
+        "close": "priceBelow(df[8], df[1])",
+        "10": "priceBelow(df[8], df[9])",
+        "50": "priceBelow(df[8], df[7])",
+        "100": "priceBelow(df[8], df[6])",
+        "200": "priceBelow(df[8], df[5])"
+      },
+      "50": {
+        "close": "priceBelow(df[7], df[1])",
+        "10": "priceBelow(df[7], df[9])",
+        "30": "priceBelow(df[7], df[8])",
+        "100": "priceBelow(df[7], df[6])",
+        "200": "priceBelow(df[7], df[5])"
+      },
+      "100": {
+        "close": "priceBelow(df[6], df[1])",
+        "10": "priceBelow(df[6], df[9])",
+        "30": "priceBelow(df[6], df[8])",
+        "50": "priceBelow(df[6], df[7])",
+        "200": "priceBelow(df[6], df[5])"
+      },
+      "200": {
+        "close": "priceBelow(df[5], df[1])",
+        "10": "priceBelow(df[5], df[9])",
+        "30": "priceBelow(df[5], df[8])",
+        "50": "priceBelow(df[5], df[7])",
+        "100": "priceBelow(df[5], df[6])"
+      }
     },
     "crossAbove":{
       "10": {
@@ -207,10 +298,23 @@ for stock in stockInfo:
 
   # Start validations
 
-  # eval(signals["crossBelow"]["10"]["30"])
-  print type col1
+  def strParserEval(input):
+    words = input.split()
+    res = "signals"
+    for i in range(0, len(words)):
+      res += '["' + words[i] + '"]'
+    try:
+      res = eval(eval(res))
+    except:
+      print "Unexpected error:", sys.exc_info()[0], "line 217"
+      return None
+    else:
+      return res
 
 
+  print strParserEval(col1)
+
+  # end stock validations
   print(str(stock["stockName"]) + " %g seconds" % (time.time() - start_time2))
 
   # save_xls([df],"end_model.xlsx")
