@@ -277,3 +277,21 @@ def varDayRtn(test, numDays, percent):
   results = pd.Series(array, name=setColName())
   return results
 
+def strParserEval(input):
+    words = input.split()
+    res = "signals"
+    for i in range(0, len(words)):
+      res += '["' + words[i] + '"]'
+    try:
+      count = 0
+      maximum = 2
+      while type(res) == unicode or type(res) == str:
+        res = eval(res)
+        count +=1
+        if count == maximum:
+          break
+    except:
+      print "Unexpected error: lines 345-351"
+      return None
+    else:
+      return res

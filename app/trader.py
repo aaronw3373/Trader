@@ -27,16 +27,53 @@ varInputPercentNt = varsSheet.row_values(15)[5]
 varInputNumDays = int(varsSheet.row_values(16)[4])
 varInputPercentDays = varsSheet.row_values(16)[5]
 
-col1 = varsSheet.row_values(27)[2]
-col2 = varsSheet.row_values(28)[2]
-col3 = varsSheet.row_values(29)[2]
-col4 = varsSheet.row_values(30)[2]
-col5 = varsSheet.row_values(31)[2]
-col6 = varsSheet.row_values(32)[2]
-col7 = varsSheet.row_values(33)[2]
-col8 = varsSheet.row_values(34)[2]
-col9= varsSheet.row_values(35)[2]
-col10 = varsSheet.row_values(36)[2]
+# final test and validation input
+# col0 - col9
+# opperation (none, and, or), signal 1, signal 2, signal 3
+col0opp = varsSheet.row_values(27)[3]
+col1opp = varsSheet.row_values(28)[3]
+col2opp = varsSheet.row_values(29)[3]
+col3opp = varsSheet.row_values(30)[3]
+col4opp = varsSheet.row_values(31)[3]
+col5opp = varsSheet.row_values(32)[3]
+col6opp = varsSheet.row_values(33)[3]
+col7opp = varsSheet.row_values(34)[3]
+col8opp = varsSheet.row_values(35)[3]
+col9opp = varsSheet.row_values(36)[3]
+
+col0sig1 = varsSheet.row_values(27)[3]
+col1sig1 = varsSheet.row_values(28)[3]
+col2sig1 = varsSheet.row_values(29)[3]
+col3sig1 = varsSheet.row_values(30)[3]
+col4sig1 = varsSheet.row_values(31)[3]
+col5sig1 = varsSheet.row_values(32)[3]
+col6sig1 = varsSheet.row_values(33)[3]
+col7sig1 = varsSheet.row_values(34)[3]
+col8sig1 = varsSheet.row_values(35)[3]
+col9sig1 = varsSheet.row_values(36)[3]
+
+col0sig2 = varsSheet.row_values(27)[4]
+col1sig2 = varsSheet.row_values(28)[4]
+col2sig2 = varsSheet.row_values(29)[4]
+col3sig2 = varsSheet.row_values(30)[4]
+col4sig2 = varsSheet.row_values(31)[4]
+col5sig2 = varsSheet.row_values(32)[4]
+col6sig2 = varsSheet.row_values(33)[4]
+col7sig2 = varsSheet.row_values(34)[4]
+col8sig2 = varsSheet.row_values(35)[4]
+col9sig2 = varsSheet.row_values(36)[4]
+
+col0sig3 = varsSheet.row_values(27)[5]
+col1sig3 = varsSheet.row_values(28)[5]
+col2sig3 = varsSheet.row_values(29)[5]
+col3sig3 = varsSheet.row_values(30)[5]
+col4sig3 = varsSheet.row_values(31)[5]
+col5sig3 = varsSheet.row_values(32)[5]
+col6sig3 = varsSheet.row_values(33)[5]
+col7sig3 = varsSheet.row_values(34)[5]
+col8sig3 = varsSheet.row_values(35)[5]
+col9sig3 = varsSheet.row_values(36)[5]
+
 
 # GET INPUT FILE
 inputDF = pd.read_excel(sys.argv[1])
@@ -103,6 +140,7 @@ for stock in stockInfo:
   df = pd.concat([df, dayRtn(df[2], df[1])],axis=1)
   df = pd.concat([df, numDayRtn(df[1], 1)],axis=1)
 
+  # stringify all the signal definitions to be called when needed
   signals = {
     "topLine": {
       "close": "topLine(df[1], [df[5],df[6],df[7],df[8],df[9]])",
@@ -295,29 +333,17 @@ for stock in stockInfo:
     }
   }
 
+  # Section 3
+  # Asign Columns
 
-  # Start validations
-
-  def strParserEval(input):
-    words = input.split()
-    res = "signals"
-    for i in range(0, len(words)):
-      res += '["' + words[i] + '"]'
-    try:
-      res = eval(eval(res))
-    except:
-      print "Unexpected error:", sys.exc_info()[0], "line 217"
-      return None
-    else:
-      return res
+  print strParserEval(col0sig1)
+  # run final tests
 
 
-  print strParserEval(col1)
-
-  # end stock validations
   print(str(stock["stockName"]) + " %g seconds" % (time.time() - start_time2))
 
   # save_xls([df],"end_model.xlsx")
 
 print("Total Elapsed time was %g seconds" % (time.time() - start_time))
 # save sheet
+# save_xls([], results.xlsx)
