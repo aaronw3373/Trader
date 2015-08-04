@@ -30,16 +30,16 @@ varInputPercentDays = varsSheet.row_values(16)[5]
 # final test and validation input
 # col0 - col9
 # opperation (none, and, or), signal 1, signal 2, signal 3
-col0opp = varsSheet.row_values(27)[3]
-col1opp = varsSheet.row_values(28)[3]
-col2opp = varsSheet.row_values(29)[3]
-col3opp = varsSheet.row_values(30)[3]
-col4opp = varsSheet.row_values(31)[3]
-col5opp = varsSheet.row_values(32)[3]
-col6opp = varsSheet.row_values(33)[3]
-col7opp = varsSheet.row_values(34)[3]
-col8opp = varsSheet.row_values(35)[3]
-col9opp = varsSheet.row_values(36)[3]
+col0opp = varsSheet.row_values(27)[2]
+col1opp = varsSheet.row_values(28)[2]
+col2opp = varsSheet.row_values(29)[2]
+col3opp = varsSheet.row_values(30)[2]
+col4opp = varsSheet.row_values(31)[2]
+col5opp = varsSheet.row_values(32)[2]
+col6opp = varsSheet.row_values(33)[2]
+col7opp = varsSheet.row_values(34)[2]
+col8opp = varsSheet.row_values(35)[2]
+col9opp = varsSheet.row_values(36)[2]
 
 col0sig1 = varsSheet.row_values(27)[3]
 col1sig1 = varsSheet.row_values(28)[3]
@@ -100,13 +100,120 @@ def readFile():
       }
       stockInfo.append(stockOBJ)
       # take out this return to do the whole set of stocks not just the first
-      return
+      # return
 
 def save_xls(list_dfs, xls_path):
-    writer = pd.ExcelWriter(xls_path)
-    for n, df in enumerate(list_dfs):
-        df.to_excel(writer,'sheet%s' % n, engine="openpyxl")
-    writer.save()
+  writer = pd.ExcelWriter(xls_path)
+  for n, df in enumerate(list_dfs):
+    df.to_excel(writer,'sheet%s' % n, engine="openpyxl")
+  writer.save()
+
+def strParserEval(input):
+  words = input.split()
+  res = "signals"
+  for i in range(0, len(words)):
+    res += '["' + words[i] + '"]'
+  try:
+    count = 0
+    maximum = 2
+    while type(res) == unicode or type(res) == str:
+      res = eval(res)
+      count +=1
+      if count == maximum:
+        break
+  except:
+    print "Unexpected error: trader.py lines 341-346"
+    return "Error"
+  else:
+    return res
+
+def makeCol(opp, sig1, sig2, sig3):
+  array = []
+  numTrue = 0
+  numSigs = 0
+  if sig1:
+    numSigs +=1
+    sig1 = strParserEval(sig1)
+    if type(sig1) == str:
+      return None
+  if sig2:
+    numSigs +=1
+    sig2 = strParserEval(sig2)
+    if type(sig2) == str:
+      return None
+  if sig3:
+    numSigs +=1
+    sig3 = strParserEval(sig3)
+    if type(sig3) == str:
+      return None
+
+  if opp == "none":
+    if numSigs == 1:
+      for i in range(0, len(sig1)):
+        if sig1[i] == 1:
+          array.append(1)
+          numTrue += 1
+        else:
+          array.append(0)
+    else:
+      print("invalid sigs: none", numSigs)
+      return None
+  elif opp == "and":
+    if numSigs == 2:
+      for i in range(0, len(sig1)):
+        if sig1[i] + sig2[i] == 2:
+          array.append(1)
+          numTrue += 1
+        else:
+          array.append(0)
+    elif numSigs == 3:
+      for i in range(0, len(sig1)):
+        if sig1[i] + sig2[i] + sig3[i]== 3:
+          array.append(1)
+          numTrue += 1
+        else:
+          array.append(0)
+    else:
+      print("invalid sigs: and", numSigs)
+      return None
+  elif opp == "or":
+    if numSigs == 2:
+      for i in range(0, len(sig1)):
+        if sig1[i] + sig2[i] >= 1:
+          array.append(1)
+          numTrue += 1
+        else:
+          array.append(0)
+    elif numSigs == 3:
+      for i in range(0, len(sig1)):
+        if sig1[i] + sig2[i] + sig3[i] >= 1:
+          array.append(1)
+          numTrue += 1
+        else:
+          array.append(0)
+    else:
+      print("invalid sigs: or", numSigs)
+      return None
+  else:
+    print("invalid opperation")
+    return None
+  result = pd.Series(array, name=setColName())
+  # print numTrue
+  return result
+
+def findNumCol():
+  numCol = 0
+  for i in range(27, 37):
+    if varsSheet.row_values(i)[3]:
+      numCol += 1
+  return numCol
+
+def canMakeCol(colNum):
+  if varsSheet.row_values(27 + colNum)[3]:
+    return eval(makeColsArr[colNum])
+  else:
+    return 0
+
 
 print("reading file...")
 # read_time = time.time()
@@ -335,8 +442,37 @@ for stock in stockInfo:
 
   # Section 3
   # Asign Columns
+  makeColsArr = ["makeCol(col0opp,col0sig1,col0sig2,col0sig3)",
+  "makeCol(col1opp,col1sig1,col1sig2,col1sig3)",
+  "makeCol(col2opp,col2sig1,col2sig2,col2sig3)",
+  "makeCol(col3opp,col3sig1,col3sig2,col3sig3)",
+  "makeCol(col4opp,col4sig1,col4sig2,col4sig3)",
+  "makeCol(col5opp,col5sig1,col5sig2,col5sig3)",
+  "makeCol(col6opp,col6sig1,col6sig2,col6sig3)",
+  "makeCol(col7opp,col7sig1,col7sig2,col7sig3)",
+  "makeCol(col8opp,col8sig1,col8sig2,col8sig3)",
+  "makeCol(col9opp,col9sig1,col9sig2,col9sig3)"]
 
-  print strParserEval(col0sig1)
+  col0 = canMakeCol(0)
+  col1 = canMakeCol(1)
+  col2 = canMakeCol(2)
+  col3 = canMakeCol(3)
+  col4 = canMakeCol(4)
+  col5 = canMakeCol(5)
+  col6 = canMakeCol(6)
+  col7 = canMakeCol(6)
+  col8 = canMakeCol(7)
+  col9 = canMakeCol(8)
+
+  numCol = findNumCol()
+
+  # print col0
+
+
+
+
+
+
   # run final tests
 
 
