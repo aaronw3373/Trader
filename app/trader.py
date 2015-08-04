@@ -27,7 +27,7 @@ varInputPercentNt = varsSheet.row_values(15)[5]
 varInputNumDays = int(varsSheet.row_values(16)[4])
 varInputPercentDays = varsSheet.row_values(16)[5]
 
-# final test and validation input
+# final columns input
 # col0 - col9
 # opperation (none, and, or), signal 1, signal 2, signal 3
 col0opp = varsSheet.row_values(27)[2]
@@ -96,6 +96,46 @@ col7sig5 = varsSheet.row_values(34)[7]
 col8sig5 = varsSheet.row_values(35)[7]
 col9sig5 = varsSheet.row_values(36)[7]
 
+# final test input
+#  opp, if sum(number),  col+days prior* 10,
+test1part1opp = varsSheet.row_values(44)[2]
+test1part1sum = varsSheet.row_values(44)[3]
+test1part1col0 = varsSheet.row_values(44)[4]
+test1part1col1 = varsSheet.row_values(44)[5]
+test1part1col2 = varsSheet.row_values(44)[6]
+test1part1col3 = varsSheet.row_values(44)[7]
+test1part1col4 = varsSheet.row_values(44)[8]
+test1part1col5 = varsSheet.row_values(44)[9]
+test1part1col6 = varsSheet.row_values(44)[10]
+test1part1col7 = varsSheet.row_values(44)[11]
+test1part1col8 = varsSheet.row_values(44)[12]
+test1part1col9 = varsSheet.row_values(44)[13]
+
+test1part2opp = varsSheet.row_values(45)[2]
+test1part2sum = varsSheet.row_values(45)[3]
+test1part2col0 = varsSheet.row_values(45)[4]
+test1part2col1 = varsSheet.row_values(45)[5]
+test1part2col2 = varsSheet.row_values(45)[6]
+test1part2col3 = varsSheet.row_values(45)[7]
+test1part2col4 = varsSheet.row_values(45)[8]
+test1part2col5 = varsSheet.row_values(45)[9]
+test1part2col6 = varsSheet.row_values(45)[10]
+test1part2col7 = varsSheet.row_values(45)[11]
+test1part2col8 = varsSheet.row_values(45)[12]
+test1part2col9 = varsSheet.row_values(45)[13]
+
+test1part3opp = varsSheet.row_values(46)[2]
+test1part3sum = varsSheet.row_values(46)[3]
+test1part3col0 = varsSheet.row_values(46)[4]
+test1part3col1 = varsSheet.row_values(46)[5]
+test1part3col2 = varsSheet.row_values(46)[6]
+test1part3col3 = varsSheet.row_values(46)[7]
+test1part3col4 = varsSheet.row_values(46)[8]
+test1part3col5 = varsSheet.row_values(46)[9]
+test1part3col6 = varsSheet.row_values(46)[10]
+test1part3col7 = varsSheet.row_values(46)[11]
+test1part3col8 = varsSheet.row_values(46)[12]
+test1part3col9 = varsSheet.row_values(46)[13]
 
 # GET INPUT FILE
 inputDF = pd.read_excel(sys.argv[1])
@@ -274,41 +314,70 @@ def canMakeCol(colNum):
   else:
     return 0
 
+def parseTestCols(testNum, partNum):
+    array = []
+    col = "test" + str(testNum) + "part" + str(partNum) + "col"
+    for i in range(0, 10):
+      test = col + str(i)
+      res =  eval(test)
+      if res:
+        array.append(res)
+    return array
 
-print("reading file...")
-# read_time = time.time()
-stockInfo = []
-readFile()
-# print("Read in time was %g seconds" % (time.time() - read_time))
+def finalTestParams(testNum, partNum):
+    testCols = parseTestCols(testNum,partNum)
+    numCols = len(testCols)
+    opp = eval("test" + str(testNum) + "part" + str(partNum) + "opp")
+    sumNum = 0
+    if opp == "sum":
+      sumNum = int(eval("test" + str(testNum) + "part" + str(partNum) + "sum"))
+    elif opp == "and":
+      sumNum = len(testCols)
+    elif opp == "or":
+      sumNum = 1
+    colArr = []
+    for i in range(0, numCols):
+      colArr.append({
+        "data": eval(testCols[i].split()[0]),
+        "daysPrior": eval(testCols[i].split()[1])
+        })
+    return colArr, sumNum, numCols
 
-print("starting calculations...")
-for stock in stockInfo:
-  start_time2 = time.time()
-  resetColName()
-#
-  # Parse the data into a new DataFrame
-  # 0-4 date, close, open, high, low
-  df = sheetParser(inputDF,stock)
+def finalTestPart(testNum, partNum):
+    params =  finalTestParams(testNum, partNum)
+    cols = params[0]
+    sumNum = params[1]
+    numCols = params[2]
+    array = []
+    for i in range(0, len(cols[0]["data"])):
+      testSum = 0
+      for j in range(0, numCols):
+        days = cols[j]["daysPrior"]
+        if i - j > 0:
+          if cols[j]["data"][i-days] == 1:
+            testSum += 1
+      if testSum >= sumNum:
+        array.append(1)
+      else:
+        array.append(0)
+    num = 0
+    for k in range(0, len(array)):
+      if array[k] == 1:
+        num += 1
+    return array, num
 
-  # Get moving averages over x numver of days
-  # 5-9
-  df = pd.concat([df, numDayAvg(df[1], 200)],axis=1)
-  df = pd.concat([df, numDayAvg(df[1], 100)],axis=1)
-  df = pd.concat([df, numDayAvg(df[1], 50)],axis=1)
-  df = pd.concat([df, numDayAvg(df[1], 30)],axis=1)
-  df = pd.concat([df, numDayAvg(df[1], 10)],axis=1)
-
-  # Get percent return over number of days
-  # 10 -15
-  df = pd.concat([df, numDayRtn(df[1], 2)],axis=1)
-  df = pd.concat([df, numDayRtn(df[1], 3)],axis=1)
-  df = pd.concat([df, numDayRtn(df[1], 5)],axis=1)
-  df = pd.concat([df, nightRtn(df[1], df[2])],axis=1)
-  df = pd.concat([df, dayRtn(df[2], df[1])],axis=1)
-  df = pd.concat([df, numDayRtn(df[1], 1)],axis=1)
-
-  # stringify all the signal definitions to be called when needed
-  signals = {
+makeColsArr = ["makeCol(col0opp,col0sig1,col0sig2,col0sig3,col0sig4,col1sig5)",
+  "makeCol(col1opp,col1sig1,col1sig2,col1sig3,col1sig4,col1sig5)",
+  "makeCol(col2opp,col2sig1,col2sig2,col2sig3,col2sig4,col2sig5)",
+  "makeCol(col3opp,col3sig1,col3sig2,col3sig3,col3sig4,col3sig5)",
+  "makeCol(col4opp,col4sig1,col4sig2,col4sig3,col4sig4,col4sig5)",
+  "makeCol(col5opp,col5sig1,col5sig2,col5sig3,col5sig4,col5sig5)",
+  "makeCol(col6opp,col6sig1,col6sig2,col6sig3,col6sig4,col6sig5)",
+  "makeCol(col7opp,col7sig1,col7sig2,col7sig3,col7sig4,col7sig5)",
+  "makeCol(col8opp,col8sig1,col8sig2,col8sig3,col8sig4,col8sig5)",
+  "makeCol(col9opp,col9sig1,col9sig2,col9sig3,col9sig4,col9sig5)"]
+ # stringify all the signal definitions to be called when needed
+signals = {
     "topLine": {
       "close": "topLine(df[1], [df[5],df[6],df[7],df[8],df[9]])",
       "200": "topLine(df[5], [df[1],df[6],df[7],df[8],df[9]])",
@@ -498,21 +567,47 @@ for stock in stockInfo:
       "returnLimit": "varRtnLimit(df[3], df[4],varInputPercent1Limit)",
       "dayReturn": "varDayRtn(df[1], varInputNumDays,varInputPercentDays)"
     }
-  }
+}
+
+#
+# GET DATA
+#
+print("reading file...")
+stockInfo = []
+readFile()
+
+#
+# FOR EACH STOCK
+#
+print("starting calculations...")
+for stock in stockInfo:
+  start_time2 = time.time()
+  resetColName()
+
+  # Parse the data into a new DataFrame
+  # 0-4 date, close, open, high, low
+  df = sheetParser(inputDF,stock)
+
+  # Get moving averages over x numver of days
+  # 5-9
+  df = pd.concat([df, numDayAvg(df[1], 200)],axis=1)
+  df = pd.concat([df, numDayAvg(df[1], 100)],axis=1)
+  df = pd.concat([df, numDayAvg(df[1], 50)],axis=1)
+  df = pd.concat([df, numDayAvg(df[1], 30)],axis=1)
+  df = pd.concat([df, numDayAvg(df[1], 10)],axis=1)
+
+  # Get percent return over number of days
+  # 10 -15
+  df = pd.concat([df, numDayRtn(df[1], 2)],axis=1)
+  df = pd.concat([df, numDayRtn(df[1], 3)],axis=1)
+  df = pd.concat([df, numDayRtn(df[1], 5)],axis=1)
+  df = pd.concat([df, nightRtn(df[1], df[2])],axis=1)
+  df = pd.concat([df, dayRtn(df[2], df[1])],axis=1)
+  df = pd.concat([df, numDayRtn(df[1], 1)],axis=1)
+
 
   # Section 3
   # Asign Columns
-  makeColsArr = ["makeCol(col0opp,col0sig1,col0sig2,col0sig3,col0sig4,col1sig5)",
-  "makeCol(col1opp,col1sig1,col1sig2,col1sig3,col1sig4,col1sig5)",
-  "makeCol(col2opp,col2sig1,col2sig2,col2sig3,col2sig4,col2sig5)",
-  "makeCol(col3opp,col3sig1,col3sig2,col3sig3,col3sig4,col3sig5)",
-  "makeCol(col4opp,col4sig1,col4sig2,col4sig3,col4sig4,col4sig5)",
-  "makeCol(col5opp,col5sig1,col5sig2,col5sig3,col5sig4,col5sig5)",
-  "makeCol(col6opp,col6sig1,col6sig2,col6sig3,col6sig4,col6sig5)",
-  "makeCol(col7opp,col7sig1,col7sig2,col7sig3,col7sig4,col7sig5)",
-  "makeCol(col8opp,col8sig1,col8sig2,col8sig3,col8sig4,col8sig5)",
-  "makeCol(col9opp,col9sig1,col9sig2,col9sig3,col9sig4,col9sig5)"]
-
   col0 = canMakeCol(0)
   col1 = canMakeCol(1)
   col2 = canMakeCol(2)
@@ -526,14 +621,28 @@ for stock in stockInfo:
 
   numCol = findNumCol()
 
-  # print col0
-
-
-
-
 
 
   # run final tests
+  print finalTestPart(1,1)[1]
+
+  # def finalTest1():
+  #   array = []
+  #   for i in range(0, len(col0)):
+  #     if finalT1P1(i) == 1 or finalT1P2(i) == 1 or finalT1P3(i) == 1:
+  #       array.append(1)
+  #     else:
+  #       array.append(0)
+  #   result = pd.Series(array, name=setColName())
+  #   return result
+
+  # final1 = finalTest1()
+
+
+
+
+
+
 
 
   print(str(stock["stockName"]) + " %g seconds" % (time.time() - start_time2))
