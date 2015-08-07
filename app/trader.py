@@ -762,7 +762,7 @@ for stock in stockInfo:
       else:
         array.append(None)
 
-    result = pd.Series(array, name=setResName())
+    result = pd.Series(array, name=stock["stockName"], index=df[0])
     return result
 
   # run final tests
@@ -777,7 +777,7 @@ for stock in stockInfo:
   resReturns = calcRtns(final2, df[15], finalReturnDays)
   df = pd.concat([df, resReturns],axis=1)
   netRtn = totRtn(resReturns)
-  print netRtn
+  # dates = df[0]
   resultsFrame = pd.concat([resultsFrame,resReturns], axis=1)
 
 
