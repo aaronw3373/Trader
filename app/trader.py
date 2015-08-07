@@ -111,6 +111,7 @@ test1part1col6 = varsSheet.row_values(44)[10]
 test1part1col7 = varsSheet.row_values(44)[11]
 test1part1col8 = varsSheet.row_values(44)[12]
 test1part1col9 = varsSheet.row_values(44)[13]
+test1part1skip = varsSheet.row_values(44)[14]
 
 test1part2opp = varsSheet.row_values(45)[2]
 test1part2sum = varsSheet.row_values(45)[3]
@@ -124,6 +125,7 @@ test1part2col6 = varsSheet.row_values(45)[10]
 test1part2col7 = varsSheet.row_values(45)[11]
 test1part2col8 = varsSheet.row_values(45)[12]
 test1part2col9 = varsSheet.row_values(45)[13]
+test1part2skip = varsSheet.row_values(45)[14]
 
 test1part3opp = varsSheet.row_values(46)[2]
 test1part3sum = varsSheet.row_values(46)[3]
@@ -137,6 +139,7 @@ test1part3col6 = varsSheet.row_values(46)[10]
 test1part3col7 = varsSheet.row_values(46)[11]
 test1part3col8 = varsSheet.row_values(46)[12]
 test1part3col9 = varsSheet.row_values(46)[13]
+test1part3skip = varsSheet.row_values(46)[14]
 
 # final test 2
 test2part1opp = varsSheet.row_values(53)[2]
@@ -151,6 +154,7 @@ test2part1col6 = varsSheet.row_values(53)[10]
 test2part1col7 = varsSheet.row_values(53)[11]
 test2part1col8 = varsSheet.row_values(53)[12]
 test2part1col9 = varsSheet.row_values(53)[13]
+test2part1skip = varsSheet.row_values(53)[14]
 
 test2part2opp = varsSheet.row_values(54)[2]
 test2part2sum = varsSheet.row_values(54)[3]
@@ -164,6 +168,7 @@ test2part2col6 = varsSheet.row_values(54)[10]
 test2part2col7 = varsSheet.row_values(54)[11]
 test2part2col8 = varsSheet.row_values(54)[12]
 test2part2col9 = varsSheet.row_values(54)[13]
+test2part2skip = varsSheet.row_values(54)[14]
 
 test2part3opp = varsSheet.row_values(55)[2]
 test2part3sum = varsSheet.row_values(55)[3]
@@ -177,6 +182,7 @@ test2part3col6 = varsSheet.row_values(55)[10]
 test2part3col7 = varsSheet.row_values(55)[11]
 test2part3col8 = varsSheet.row_values(55)[12]
 test2part3col9 = varsSheet.row_values(55)[13]
+test2part3skip = varsSheet.row_values(55)[14]
 
 finalReturnDays = int(varsSheet.row_values(59)[3])
 # GET INPUT FILE
@@ -370,7 +376,12 @@ def finalTestParams(testNum, partNum):
     testCols = parseTestCols(testNum,partNum)
     numCols = len(testCols)
     opp = eval("test" + str(testNum) + "part" + str(partNum) + "opp")
+    skip = eval("test" + str(testNum) + "part" + str(partNum) + "skip").lower()
     sumNum = 0
+    if skip == "skip" or skip == "true":
+      skip = True
+    else:
+      skip = False
     if opp == "sum":
       sumNum = int(eval("test" + str(testNum) + "part" + str(partNum) + "sum"))
     elif opp == "and":
@@ -385,13 +396,14 @@ def finalTestParams(testNum, partNum):
         "data": eval(testCols[i].split()[0].lower()),
         "daysPrior": eval(testCols[i].split()[1])
         })
-    return colArr, sumNum, numCols
+    return colArr, sumNum, numCols, skip
 
 def finalTestPart(testNum, partNum):
     params =  finalTestParams(testNum, partNum)
     cols = params[0]
     sumNum = params[1]
     numCols = params[2]
+    skip =  params[3]
     array = []
     for i in range(0, len(cols[0]["data"])):
       testSum = 0
@@ -408,7 +420,7 @@ def finalTestPart(testNum, partNum):
     for k in range(0, len(array)):
       if array[k] == 1:
         num += 1
-    return array
+    return array, skip
 
 def finalTest1():
     numTests = 0
@@ -416,37 +428,62 @@ def finalTest1():
       if varsSheet.row_values(44 + n)[2]:
         numTests += 1
     resArray = []
+    finalArr = []
     tests = []
+    skips = []
     for j in range(1, numTests+1):
-      tests.append(finalTestPart(1, j))
+      test = finalTestPart(1, j)
+      tests.append(test[0])
+      skips.append(test[1])
     for i in range(0, len(tests[0])):
       res = 0
+      finalRes = 0
       for k in range(0, numTests):
-        if tests[k][i] == 1:
-          res = 1
+        if skips[k]:
+          if tests[k][i] == 1:
+            finalRes = 1
+        else:
+          if tests[k][i] == 1:
+            res = 1
       resArray.append(res)
+      finalArr.append(finalRes)
     result = pd.Series(resArray, name=setColName())
-    return resArray,result
+    return resArray, result, finalArr
 
-def finalTest2(final1):
+def finalTest2(dependent, done):
     numTests = 0
     for n in range(0, 5):
       if varsSheet.row_values(53 + n)[2]:
         numTests += 1
     resArray = []
     tests = []
+    skips = []
     for j in range(1, numTests+1):
-      tests.append(finalTestPart(2, j))
+      test = finalTestPart(2, j)
+      tests.append(test[0])
+      skips.append(test[1])
     for i in range(0, len(tests[0])):
       res = 0
       for k in range(0, numTests):
-        if tests[k][i] == 1:
-          res = 1
-      if res == 1 and final1[i] == 1:
-        resArray.append(res)
+        if skips[k]:
+          if tests[k][i] == 1:
+            res = 2
+        else:
+          if tests[k][i] == 1:
+            res = 1
+      if res == 1 and dependent[i] == 1:
+        resArray.append(1)
+      elif res == 2:
+        resArray.append(1)
       else:
         resArray.append(0)
-    result = pd.Series(resArray, name=setColName())
+    final = []
+    for l in range(0, len(done)):
+      if done[l] == 1 or resArray[l] == 1:
+        final.append(1)
+      else:
+        final.append(0)
+    result = pd.Series(final, name=setColName())
     return result
 
 makeColsArr = ["makeCol(col0opp,col0sig1,col0sig2,col0sig3,col0sig4,col1sig5)",
@@ -711,7 +748,6 @@ for stock in stockInfo:
     for i in range(0, len(rtn)):
       if pd.notnull(rtn[i]):
         res += rtn[i]
-    print res
     return res
 
   def calcRtns(final2, rtn1, numDays):
@@ -727,21 +763,22 @@ for stock in stockInfo:
         array.append(None)
 
     result = pd.Series(array, name=setResName())
-    print totRtn(array)
     return result
 
   # run final tests
   final1 = finalTest1()
-  df = pd.concat([df, final1[1]],axis=1)
+  dependent = final1[0]
+  # df = pd.concat([df, final1[1]],axis=1)
+  done = final1[2]
 
-  final2 = finalTest2(final1[0])
+  final2 = finalTest2(dependent, done)
   df = pd.concat([df, final2],axis=1)
 
   resReturns = calcRtns(final2, df[15], finalReturnDays)
   df = pd.concat([df, resReturns],axis=1)
+  netRtn = totRtn(resReturns)
+  print netRtn
   resultsFrame = pd.concat([resultsFrame,resReturns], axis=1)
-
-  # totRtn(resReturns)
 
 
   print(str(stock["stockName"]) + " %g seconds" % (time.time() - start_time2))
