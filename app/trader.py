@@ -486,6 +486,101 @@ def finalTest2(dependent, done):
     result = pd.Series(final, name=setColName())
     return result
 
+def calcRtns(final2, rtn1, numDays):
+    array = []
+    for i in range(0, len(final2)):
+      if final2[i] == 1:
+        rtn = 0
+        for j in range(1, numDays+1):
+          if (i + j) < len(rtn1):
+            rtn += rtn1[i + j]
+        array.append(rtn)
+      else:
+        array.append(None)
+
+    result = pd.Series(array, name=stock["stockName"], index=df[0])
+    return result
+
+def rtnStats(rtn):
+    totRtn = 0
+    rtns = []
+    hit = 0
+    mx = -10
+    mn = 10
+    winHit = 0
+    winRtn = 0
+    lossHit = 0
+    winStr = 0
+    lossStr = 0
+    winStrRtn = 0
+    lossStrRtn = 0
+    mxWinStr = 0
+    mxWinStrRtn = 0
+    mxLossStr = 0
+    mxLossStrRtn = 0
+    for i in range(0, len(rtn)):
+      if pd.notnull(rtn[i]):
+        totRtn += rtn[i]
+        hit += 1
+        rtns.append(rtn[i])
+        if rtn[i] > mx:
+          mx = rtn[i]
+        if rtn[i] < mn:
+          mn = rtn[i]
+        if rtn[i] > 0:
+          winHit += 1
+          winRtn += rtn[i]
+          winStr += 1
+          winStrRtn += rtn[i]
+          if lossStr > mxLossStr:
+            mxLossStr = lossStr
+            mxLossStrRtn = lossStrRtn
+          lossStr = 0
+          lossStrRtn = 0
+        if rtn[i] < 0:
+          lossHit += 1
+          lossStr += 1
+          lossStrRtn += rtn[i]
+          if winStr > mxWinStr:
+            mxWinStr = winStr
+            mxWinStrRtn = winStrRtn
+          winStr = 0
+          winStrRtn = 0
+    drawDown = mn - mx
+    avgWin = winRtn / winHit
+    winPer = winHit / hit
+    avgRtn = totRtn / hit
+    data = [hit,
+      mx,
+      mn,
+      avgRtn,
+      totRtn,
+      winHit,
+      winRtn,
+      lossHit,
+      mxWinStr,
+      mxWinStrRtn,
+      mxLossStr,
+      mxLossStrRtn,
+      drawDown,
+      rtns.sort()]
+    index = [
+      "Hit Count",
+      "Max",
+      "Min",
+      "Average Return",
+      "Total Return",
+      "Win #",
+      "Win %",
+      "Loss #",
+      "Count Win Streak",
+      "Win Streak %",
+      "Count Loss Streak",
+      "Loss Streak %",
+      "Max Drawdown",
+      "List of Returns"]
+    result = pd.Series(data, name=stock["stockName"], index=index)
+    return result
 makeColsArr = ["makeCol(col0opp,col0sig1,col0sig2,col0sig3,col0sig4,col1sig5)",
   "makeCol(col1opp,col1sig1,col1sig2,col1sig3,col1sig4,col1sig5)",
   "makeCol(col2opp,col2sig1,col2sig2,col2sig3,col2sig4,col2sig5)",
@@ -497,6 +592,7 @@ makeColsArr = ["makeCol(col0opp,col0sig1,col0sig2,col0sig3,col0sig4,col1sig5)",
   "makeCol(col8opp,col8sig1,col8sig2,col8sig3,col8sig4,col8sig5)",
   "makeCol(col9opp,col9sig1,col9sig2,col9sig3,col9sig4,col9sig5)"]
  # stringify all the signal definitions to be called when needed
+
 signals = {
     "topLine": {
       "close": "topLine(df[1], [df[5],df[6],df[7],df[8],df[9]])",
@@ -701,6 +797,7 @@ readFile()
 #
 
 resultsFrame = pd.DataFrame()
+returnsFrame = pd.DataFrame()
 print("starting calculations...")
 for stock in stockInfo:
   start_time2 = time.time()
@@ -743,42 +840,26 @@ for stock in stockInfo:
 
   numCol = findNumCol()
 
-  def totRtn(rtn):
-    res = 0
-    for i in range(0, len(rtn)):
-      if pd.notnull(rtn[i]):
-        res += rtn[i]
-    return res
-
-  def calcRtns(final2, rtn1, numDays):
-    array = []
-    for i in range(0, len(final2)):
-      if final2[i] == 1:
-        rtn = 0
-        for j in range(1, numDays+1):
-          if (i + j) < len(rtn1):
-            rtn += rtn1[i + j]
-        array.append(rtn)
-      else:
-        array.append(None)
-
-    result = pd.Series(array, name=stock["stockName"], index=df[0])
-    return result
 
   # run final tests
+
   final1 = finalTest1()
   dependent = final1[0]
   # df = pd.concat([df, final1[1]],axis=1)
   done = final1[2]
 
   final2 = finalTest2(dependent, done)
-  df = pd.concat([df, final2],axis=1)
+  # df = pd.concat([df, final2],axis=1)
 
+  # final returns
   resReturns = calcRtns(final2, df[15], finalReturnDays)
-  df = pd.concat([df, resReturns],axis=1)
-  netRtn = totRtn(resReturns)
-  # dates = df[0]
-  resultsFrame = pd.concat([resultsFrame,resReturns], axis=1)
+  returnsFrame = pd.concat([returnsFrame,resReturns], axis = 1)
+  # df = pd.concat([df, resReturns],axis=1)
+  stats = rtnStats(resReturns)
+  resultsFrame = pd.concat([resultsFrame, stats], axis = 1)
+
+  # print stats
+
 
 
   print(str(stock["stockName"]) + " %g seconds" % (time.time() - start_time2))
@@ -787,4 +868,5 @@ for stock in stockInfo:
 
 print("Total Elapsed time was %g seconds" % (time.time() - start_time))
 # save sheet
+resultsFrame = pd.concat([resultsFrame, returnsFrame])
 save_xls([resultsFrame], "results.xlsx")
