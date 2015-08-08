@@ -31,6 +31,7 @@ pandas,
 xlrd
 
 For installing Python:
+I'm using version 2.7.10 as it is more stable:
 https://www.python.org/downloads/
 
 For installing pandas:
