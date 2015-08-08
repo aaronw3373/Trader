@@ -104,7 +104,8 @@ def priceAbove(test, other):
   results = pd.Series(array, name=setColName())
   return results
 
-def priceAbove(test, other):
+# price below
+def priceBelow(test, other):
   array = []
   for i in range(0, len(test)):
     if pd.notnull(other[i]):
@@ -117,6 +118,7 @@ def priceAbove(test, other):
   results = pd.Series(array, name=setColName())
   return results
 
+# cross above
 def crossAbove(test, other):
   array = []
   for i in range(0, len(test)):
@@ -130,6 +132,7 @@ def crossAbove(test, other):
   results = pd.Series(array, name=setColName())
   return results
 
+# cross below
 def crossBelow(test, other):
   array = []
   for i in range(0, len(test)):
@@ -143,6 +146,7 @@ def crossBelow(test, other):
   results = pd.Series(array, name=setColName())
   return results
 
+# cross a variable price
 def crossVarPrice(test, var):
   array = []
   array.append(0)
@@ -159,6 +163,7 @@ def crossVarPrice(test, var):
   results = pd.Series(array, name=setColName())
   return results
 
+# cross a variable percent
 def crossVarPercent(test, var):
   array = []
   if var >= 0:
@@ -182,6 +187,7 @@ def crossVarPercent(test, var):
   results = pd.Series(array, name=setColName())
   return results
 
+# return limit variable
 def varRtnLimit(high, low, var):
   array = []
   if var >= 0:
@@ -200,7 +206,7 @@ def varRtnLimit(high, low, var):
   return results
 
 
-
+# high and low between interdays and end of days
 def highBtwIDays(start, end, numDays, percent):
   array = []
   for i in range(0, len(start)):
@@ -259,6 +265,7 @@ def lowBtwEDays(start, end, numDays, percent):
   results = pd.Series(array, name=setColName())
   return results
 
+# variable day & percent return
 def varDayRtn(test, numDays, percent):
   test = numDayRtn(test, numDays)
   array = []
