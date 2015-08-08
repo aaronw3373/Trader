@@ -10,9 +10,12 @@ And returns a portfolio of each stock and the returns over time for the input si
 #How to use
 This is a command line application
 To use go into the root of the application and in the command line type:
-pythop trader.py <--stock price file--> <--var input file-->
+python trader.py <--stock price file--> <--var input file-->
 stock price being a spreadsheet of all the stocks price data
 and var input file being a spreadsheet of the input variables
+
+for testing run:
+python trader.py lib/input.xlsx lib/inputVars.xlsx
 
 #Dependencies
 python,
