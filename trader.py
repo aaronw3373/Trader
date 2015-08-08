@@ -96,6 +96,7 @@ col7sig5 = varsSheet.row_values(34)[7]
 col8sig5 = varsSheet.row_values(35)[7]
 col9sig5 = varsSheet.row_values(36)[7]
 
+
 # final test input
 #  opp, if sum(number),  col+days prior* 10,
 # final test 1
@@ -141,6 +142,62 @@ test1part3col8 = varsSheet.row_values(46)[12]
 test1part3col9 = varsSheet.row_values(46)[13]
 test1part3skip = varsSheet.row_values(46)[14]
 
+test1part4opp = varsSheet.row_values(47)[2]
+test1part4sum = varsSheet.row_values(47)[3]
+test1part4col0 = varsSheet.row_values(47)[4]
+test1part4col1 = varsSheet.row_values(47)[5]
+test1part4col2 = varsSheet.row_values(47)[6]
+test1part4col3 = varsSheet.row_values(47)[7]
+test1part4col4 = varsSheet.row_values(47)[8]
+test1part4col5 = varsSheet.row_values(47)[9]
+test1part4col6 = varsSheet.row_values(47)[10]
+test1part4col7 = varsSheet.row_values(47)[11]
+test1part4col8 = varsSheet.row_values(47)[12]
+test1part4col9 = varsSheet.row_values(47)[13]
+test1part4skip = varsSheet.row_values(47)[14]
+
+test1part5opp = varsSheet.row_values(48)[2]
+test1part5sum = varsSheet.row_values(48)[3]
+test1part5col0 = varsSheet.row_values(48)[4]
+test1part5col1 = varsSheet.row_values(48)[5]
+test1part5col2 = varsSheet.row_values(48)[6]
+test1part5col3 = varsSheet.row_values(48)[7]
+test1part5col4 = varsSheet.row_values(48)[8]
+test1part5col5 = varsSheet.row_values(48)[9]
+test1part5col6 = varsSheet.row_values(48)[10]
+test1part5col7 = varsSheet.row_values(48)[11]
+test1part5col8 = varsSheet.row_values(48)[12]
+test1part5col9 = varsSheet.row_values(48)[13]
+test1part5skip = varsSheet.row_values(48)[14]
+
+test1part6opp = varsSheet.row_values(49)[2]
+test1part6sum = varsSheet.row_values(49)[3]
+test1part6col0 = varsSheet.row_values(49)[4]
+test1part6col1 = varsSheet.row_values(49)[5]
+test1part6col2 = varsSheet.row_values(49)[6]
+test1part6col3 = varsSheet.row_values(49)[7]
+test1part6col4 = varsSheet.row_values(49)[8]
+test1part6col5 = varsSheet.row_values(49)[9]
+test1part6col6 = varsSheet.row_values(49)[10]
+test1part6col7 = varsSheet.row_values(49)[11]
+test1part6col8 = varsSheet.row_values(49)[12]
+test1part6col9 = varsSheet.row_values(49)[13]
+test1part6skip = varsSheet.row_values(49)[14]
+
+test1part7opp = varsSheet.row_values(50)[2]
+test1part7sum = varsSheet.row_values(50)[3]
+test1part7col0 = varsSheet.row_values(50)[4]
+test1part7col1 = varsSheet.row_values(50)[5]
+test1part7col2 = varsSheet.row_values(50)[6]
+test1part7col3 = varsSheet.row_values(50)[7]
+test1part7col4 = varsSheet.row_values(50)[8]
+test1part7col5 = varsSheet.row_values(50)[9]
+test1part7col6 = varsSheet.row_values(50)[10]
+test1part7col7 = varsSheet.row_values(50)[11]
+test1part7col8 = varsSheet.row_values(50)[12]
+test1part7col9 = varsSheet.row_values(50)[13]
+test1part7skip = varsSheet.row_values(50)[14]
+
 # final test 2
 test2part1opp = varsSheet.row_values(53)[2]
 test2part1sum = varsSheet.row_values(53)[3]
@@ -184,12 +241,40 @@ test2part3col8 = varsSheet.row_values(55)[12]
 test2part3col9 = varsSheet.row_values(55)[13]
 test2part3skip = varsSheet.row_values(55)[14]
 
+test2part4opp = varsSheet.row_values(56)[2]
+test2part4sum = varsSheet.row_values(56)[3]
+test2part4col0 = varsSheet.row_values(56)[4]
+test2part4col1 = varsSheet.row_values(56)[5]
+test2part4col2 = varsSheet.row_values(56)[6]
+test2part4col3 = varsSheet.row_values(56)[7]
+test2part4col4 = varsSheet.row_values(56)[8]
+test2part4col5 = varsSheet.row_values(56)[9]
+test2part4col6 = varsSheet.row_values(56)[10]
+test2part4col7 = varsSheet.row_values(56)[11]
+test2part4col8 = varsSheet.row_values(56)[12]
+test2part4col9 = varsSheet.row_values(56)[13]
+test2part4skip = varsSheet.row_values(56)[14]
+
+test2part5opp = varsSheet.row_values(57)[2]
+test2part5sum = varsSheet.row_values(57)[3]
+test2part5col0 = varsSheet.row_values(57)[4]
+test2part5col1 = varsSheet.row_values(57)[5]
+test2part5col2 = varsSheet.row_values(57)[6]
+test2part5col3 = varsSheet.row_values(57)[7]
+test2part5col4 = varsSheet.row_values(57)[8]
+test2part5col5 = varsSheet.row_values(57)[9]
+test2part5col6 = varsSheet.row_values(57)[10]
+test2part5col7 = varsSheet.row_values(57)[11]
+test2part5col8 = varsSheet.row_values(57)[12]
+test2part5col9 = varsSheet.row_values(57)[13]
+test2part5skip = varsSheet.row_values(57)[14]
+
 finalReturnDays = int(varsSheet.row_values(59)[3])
-# GET INPUT FILE
+
+# GET Stock Data File
 inputDF = pd.read_excel(sys.argv[1])
 
-# read the input dataframe and create objects of stocks
-# TODO: improve error handling and rowstart awareness
+# List of functions for reading and maniplulating files
 def findEnd(i, inputDF):
   for j in range(5, len(inputDF)):
     if pd.isnull(inputDF.iloc[j,i+1]):
@@ -786,18 +871,18 @@ signals = {
 }
 
 #
-# GET DATA
+# Parse through the stocks
 #
 print("reading file...")
 stockInfo = []
 readFile()
 
+resultsFrame = pd.DataFrame()
+returnsFrame = pd.DataFrame()
+
 #
 # FOR EACH STOCK
 #
-
-resultsFrame = pd.DataFrame()
-returnsFrame = pd.DataFrame()
 print("starting calculations...")
 for stock in stockInfo:
   start_time2 = time.time()
@@ -826,7 +911,7 @@ for stock in stockInfo:
 
 
   # Section 3
-  # Asign Columns
+  # Assign Columns
   col0 = canMakeCol(0)
   col1 = canMakeCol(1)
   col2 = canMakeCol(2)
@@ -845,28 +930,26 @@ for stock in stockInfo:
 
   final1 = finalTest1()
   dependent = final1[0]
-  # df = pd.concat([df, final1[1]],axis=1)
   done = final1[2]
 
   final2 = finalTest2(dependent, done)
-  # df = pd.concat([df, final2],axis=1)
 
-  # final returns
+  # calculate returns returns.
   resReturns = calcRtns(final2, df[15], finalReturnDays)
   returnsFrame = pd.concat([returnsFrame,resReturns], axis = 1)
-  # df = pd.concat([df, resReturns],axis=1)
+
   stats = rtnStats(resReturns)
   resultsFrame = pd.concat([resultsFrame, stats], axis = 1)
 
-  # print stats
-
+  # save in temp stock df
+  dfRes = pd.concat([stats, resReturns])
+  df = pd.concat([df, dfRes],axis=1)
 
 
   print(str(stock["stockName"]) + " %g seconds" % (time.time() - start_time2))
 
-  # save_xls([df],"end_model.xlsx")
-
-print("Total Elapsed time was %g seconds" % (time.time() - start_time))
-# save sheet
+# save and join the tables.
 resultsFrame = pd.concat([resultsFrame, returnsFrame])
 save_xls([resultsFrame], "results.xlsx")
+
+print("Total Elapsed time was %g seconds" % (time.time() - start_time))
