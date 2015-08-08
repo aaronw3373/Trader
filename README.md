@@ -28,3 +28,4 @@ pandas,
 xlrd
 <!-- Go into that directory and type: python test.py -->
 <!-- Once complete if there are no errors then you are set to use trader -->
+
