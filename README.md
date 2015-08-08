@@ -29,6 +29,16 @@ install the following dependencies if you don't already have them:
 python,
 pandas,
 xlrd
+
+For installing Python:
+https://www.python.org/downloads/
+
+For installing pandas:
+http://pandas.pydata.org/pandas-docs/stable/install.html
+
+
+
+
 <!-- Go into that directory and type: python test.py -->
 <!-- Once complete if there are no errors then you are set to use trader -->
 
