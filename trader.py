@@ -666,6 +666,7 @@ def rtnStats(rtn):
       "List of Returns"]
     result = pd.Series(data, name=stock["stockName"], index=index)
     return result
+
 makeColsArr = ["makeCol(col0opp,col0sig1,col0sig2,col0sig3,col0sig4,col1sig5)",
   "makeCol(col1opp,col1sig1,col1sig2,col1sig3,col1sig4,col1sig5)",
   "makeCol(col2opp,col2sig1,col2sig2,col2sig3,col2sig4,col2sig5)",

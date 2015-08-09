@@ -12,6 +12,7 @@ def resetColName():
   global colName
   colName = -1
 
+# TODO: NOT NEEDED?
 resName = -1
 def setResName():
   global resName
