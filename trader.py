@@ -96,10 +96,10 @@ col7sig5 = varsSheet.row_values(34)[7]
 col8sig5 = varsSheet.row_values(35)[7]
 col9sig5 = varsSheet.row_values(36)[7]
 
-
 # final test input
-#  opp, if sum(number),  col+days prior* 10,
+#  opp, if sum,  col+days prior* 10,
 # final test 1
+# part 1-7
 test1part1opp = varsSheet.row_values(44)[2]
 test1part1sum = varsSheet.row_values(44)[3]
 test1part1col0 = varsSheet.row_values(44)[4]
@@ -199,6 +199,7 @@ test1part7col9 = varsSheet.row_values(50)[13]
 test1part7skip = varsSheet.row_values(50)[14]
 
 # final test 2
+# part 1-5
 test2part1opp = varsSheet.row_values(53)[2]
 test2part1sum = varsSheet.row_values(53)[3]
 test2part1col0 = varsSheet.row_values(53)[4]

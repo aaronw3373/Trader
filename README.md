@@ -20,21 +20,27 @@ python trader.py lib/input.xlsx lib/inputVars.xlsx
 #Dependencies
 python,
 pandas,
-xlrd
+xlrd,
+openpyxl
 
 #Installation
 Fork this repository in any directory on your computer.
 install the following dependencies if you don't already have them:
 
-python,
-pandas,
-xlrd
+
+
+python 2.7.#
+pandas 0.16.#
+xlrd 0.9.4
+openpyxl 1.8.6
 
 For installing Python:
 I'm using version 2.7.10 as it is more stable:
 https://www.python.org/downloads/
 
-For installing pandas:
+pip install pandas, xlrd, and openpyxl
+
+For more on installing pandas:
 http://pandas.pydata.org/pandas-docs/stable/install.html
 
 
