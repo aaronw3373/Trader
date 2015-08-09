@@ -1,6 +1,6 @@
-import openpyxl
+# import openpyxl
+# import numpy as np
 import pandas as pd
-import numpy as np
 
 # column writter counter
 colName = -1
@@ -43,7 +43,7 @@ def numDayRtn(input, numDays):
 
 def nightRtn(closeYesterday, openToday):
   array = []
-  array.append(np.nan)
+  array.append(None)
   for i in range(1, len(openToday)):
     change = (openToday[i]-closeYesterday[i-1])/closeYesterday[i-1]
     array.append(change)
