@@ -273,28 +273,31 @@ test2part5skip = varsSheet.row_values(57)[14]
 finalReturnDays = int(varsSheet.row_values(59)[3])
 
 # GET Stock Data File
+print("importing file...")
 inputDF = pd.read_excel(sys.argv[1])
 
 # List of functions for reading and maniplulating files
-def findEnd(i, inputDF):
-  for j in range(5, len(inputDF)):
-    if pd.isnull(inputDF.iloc[j,i+1]):
-      return j
-
 def readFile():
+  # TODO make the top end of the range the last valid value
+  # now it is at 13660 instead of 1270 and so it takes a lot longer
   for i in range(0, len(inputDF.columns)):
+  # for i in range(0, 1300):
     if pd.notnull(inputDF.iloc[3,i]):
-      stockOBJ = {
-        "stockName": inputDF.iloc[3,i],
-        "rowStart": 5,
-        "rowEnd": findEnd(i, inputDF),
-        "dateRead": i,
-        "closeRead": i+1,
-        "openRead": i+2,
-        "highRead": i+3,
-        "lowRead": i+4
-      }
-      stockInfo.append(stockOBJ)
+      if pd.notnull(inputDF.iloc[6,i]):
+        print inputDF.iloc[3,i], i
+        stockOBJ = {
+          "stockName": inputDF.iloc[3,i],
+          "rowStart": 5,
+          "rowEnd": inputDF.iloc[5:,i+1].last_valid_index()+1,
+          "dateRead": i,
+          "closeRead": i+1,
+          "openRead": i+2,
+          "highRead": i+3,
+          "lowRead": i+4
+        }
+        stockInfo.append(stockOBJ)
+        # print i
+      # print i
       # take out this return to do the whole set of stocks not just the first
       # return
 
@@ -585,7 +588,7 @@ def calcRtns(final2, rtn1, numDays):
         array.append(None)
 
     result = pd.Series(array, name=stock["stockName"], index=df[0])
-    return result
+    return result, array
 
 def rtnStats(rtn):
     totRtn = 0
@@ -633,9 +636,14 @@ def rtnStats(rtn):
           winStr = 0
           winStrRtn = 0
     drawDown = mn - mx
-    avgWin = winRtn / winHit
-    winPer = winHit / hit
-    avgRtn = totRtn / hit
+    avgWin = 0
+    winPer = 0
+    avgRtn = 0
+    if winHit !=0:
+      avgWin = winRtn / winHit
+    if hit != 0:
+      winPer = winHit / hit
+      avgRtn = totRtn / hit
     data = [hit,
       mx,
       mn,
@@ -879,6 +887,7 @@ print("reading file...")
 stockInfo = []
 readFile()
 
+print("making dataFrames...")
 resultsFrame = pd.DataFrame()
 returnsFrame = pd.DataFrame()
 
@@ -911,7 +920,7 @@ for stock in stockInfo:
   df = pd.concat([df, dayRtn(df[2], df[1])],axis=1)
   df = pd.concat([df, numDayRtn(df[1], 1)],axis=1)
 
-
+  setColName()
   # Section 3
   # Assign Columns
   col0 = canMakeCol(0)
@@ -927,7 +936,14 @@ for stock in stockInfo:
 
   numCol = findNumCol()
 
+  def saveToDF(numCol):
+    global df
+    for i in range(0, numCol):
+      col = eval("col" + str(i))
+      df = pd.concat([df, col],axis=1)
 
+  saveToDF(numCol)
+  setColName()
   # run final tests
 
   final1 = finalTest1()
@@ -937,20 +953,23 @@ for stock in stockInfo:
   final2 = finalTest2(dependent, done)
 
   # calculate returns returns.
-  resReturns = calcRtns(final2, df[15], finalReturnDays)
+  returns = calcRtns(final2, df[15], finalReturnDays)
+  resReturns = returns[0]
   returnsFrame = pd.concat([returnsFrame,resReturns], axis = 1)
 
   stats = rtnStats(resReturns)
   resultsFrame = pd.concat([resultsFrame, stats], axis = 1)
 
   # save in temp stock df
-  dfRes = pd.concat([stats, resReturns])
-  df = pd.concat([df, dfRes],axis=1)
+  tempRtns = pd.Series(returns[1], name=setColName())
+  df = pd.concat([df, tempRtns],axis=1)
 
 
   print(str(stock["stockName"]) + " %g seconds" % (time.time() - start_time2))
+  # save_xls([df],str(stock["stockName"]) + ".xlsx")
 
 # save and join the tables.
+print("saving results...")
 resultsFrame = pd.concat([resultsFrame, returnsFrame])
 save_xls([resultsFrame], "results.xlsx")
 
