@@ -4,7 +4,8 @@ start_time = time.time()
 from index import *
 import xlrd
 import sys
-from fs.opener import fsopendir
+# uncomment to run importer
+# from fs.opener import fsopendir
 
 # Input variables
 vars_model = xlrd.open_workbook(sys.argv[2])
@@ -898,11 +899,11 @@ inputDF = pd.read_excel(sys.argv[1])
 #
 # Parse through the stocks
 #
-print("reading input DataFrame...")
+print("reading files...")
 stockInfo = []
 readFile()
 
-print("making result DataFrame...")
+print("making new DataFrame...")
 resultsFrame = pd.DataFrame()
 returnsFrame = pd.DataFrame()
 
