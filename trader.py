@@ -4,6 +4,7 @@ start_time = time.time()
 from index import *
 import xlrd
 import sys
+from fs.opener import fsopendir
 
 # Input variables
 vars_model = xlrd.open_workbook(sys.argv[2])
@@ -272,11 +273,17 @@ test2part5skip = varsSheet.row_values(57)[14]
 
 finalReturnDays = int(varsSheet.row_values(59)[3])
 
-# GET Stock Data File
-print("importing file...")
-inputDF = pd.read_excel(sys.argv[1])
-
 # List of functions for reading and maniplulating files
+
+def importer(folder):
+  global inputDF
+  data_fs = fsopendir(folder)
+  for item in data_fs:
+    print("importing "+ item)
+    inputDF = pd.concat([inputDF, pd.read_excel(str(folder) +'/'+ str(item))],axis=1)
+    # the brake makes it only take the first file
+    break
+
 def readFile():
   # TODO make the top end of the range the last valid value
   # now it is at 13660 instead of 1270 and so it takes a lot longer
@@ -284,7 +291,7 @@ def readFile():
   # for i in range(0, 1300):
     if pd.notnull(inputDF.iloc[3,i]):
       if pd.notnull(inputDF.iloc[6,i]):
-        print inputDF.iloc[3,i], i
+        print inputDF.iloc[3,i]
         stockOBJ = {
           "stockName": inputDF.iloc[3,i],
           "rowStart": 5,
@@ -880,14 +887,22 @@ signals = {
     }
 }
 
+# GET Stock Data File
+print("importing files...")
+# new way
+# inputDF = pd.DataFrame()
+# importer(sys.argv[1])
+# old way
+inputDF = pd.read_excel(sys.argv[1])
+
 #
 # Parse through the stocks
 #
-print("reading file...")
+print("reading input DataFrame...")
 stockInfo = []
 readFile()
 
-print("making dataFrames...")
+print("making result DataFrame...")
 resultsFrame = pd.DataFrame()
 returnsFrame = pd.DataFrame()
 
