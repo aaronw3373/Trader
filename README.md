@@ -49,3 +49,22 @@ http://pandas.pydata.org/pandas-docs/stable/install.html
 <!-- Go into that directory and type: python test.py -->
 <!-- Once complete if there are no errors then you are set to use trader -->
 
+
+# Kai Notes
+
+2,3, and 5 day return fixed.
+  now sums from the daily return.
+
+15 (variable day return) changed to divide close 15 days in future by open tommorow morning
+
+count win streak fixed
+
+win percent fixed
+
+
+I'm working on adding in multiple operations per line.
+
+Talk about part 3 in the results file section of the email
+  done i3 and i4 add dates for the win and loss strea
+  can do f5. already done saved as a series indexedReturns
+    but what is the difference between f5 and f7

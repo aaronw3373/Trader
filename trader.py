@@ -588,16 +588,18 @@ def calcRtns(final2, close, open, numDays):
     array = []
     for i in range(0, len(final2)):
       if final2[i] == 1 and len(final2) > (i + 15):
-        rtn = close[i + 15] / open[i+1]
+        rtn = (close[i + 15] / open[i+1] )- 1
+        # print rtn
         array.append(rtn)
       else:
         array.append(None)
     result = pd.Series(array, name=stock["stockName"], index=df[0])
     return result, array
 
-def rtnStats(rtn):
+def rtnStats(rtn, date):
     totRtn = 0
     rtns = []
+    dates = []
     hit = 0
     mx = -10
     mn = 10
@@ -617,6 +619,7 @@ def rtnStats(rtn):
         totRtn += rtn[i]
         hit += 1
         rtns.append(rtn[i])
+        dates.append(date[i])
         if rtn[i] > mx:
           mx = rtn[i]
         if rtn[i] < mn:
@@ -624,31 +627,52 @@ def rtnStats(rtn):
         if rtn[i] > 0:
           winHit += 1
           winRtn += rtn[i]
-          winStr += 1
-          winStrRtn += rtn[i]
-          if lossStr > mxLossStr:
-            mxLossStr = lossStr
-            mxLossStrRtn = lossStrRtn
-          lossStr = 0
-          lossStrRtn = 0
         if rtn[i] < 0:
           lossHit += 1
-          lossStr += 1
-          lossStrRtn += rtn[i]
-          if winStr > mxWinStr:
-            mxWinStr = winStr
-            mxWinStrRtn = winStrRtn
-          winStr = 0
-          winStrRtn = 0
+    sortedRtns = []
+    winDates = []
+    winDate = None
+    lossDates = []
+    winDate = None
+    for j in range(0,len(rtns)):
+      # print dates[j], rtns[j]
+      if rtns[j] > 0:
+        winDates.append(dates[j])
+        winStr += 1
+        winStrRtn += rtns[j]
+        if winStr > mxWinStr:
+          winDate = winDates[0]
+          mxWinStr = winStr
+          mxWinStrRtn = winStrRtn
+        lossDates = []
+        lossStr = 0
+        lossStrRtn = 0
+      if rtns[j] < 0:
+        lossDates.append(dates[j])
+        lossStr += 1
+        lossStrRtn += rtns[j]
+        if lossStr > mxLossStr:
+          lossDate = lossDates[0]
+          mxLossStr = lossStr
+          mxLossStrRtn = lossStrRtn
+        winDates = []
+        winStr = 0
+        winStrRtn = 0
+      sortedRtns.append(round(rtns[j],4))
     drawDown = mn - mx
     avgWin = 0
     winPer = 0
     avgRtn = 0
+    winPercent = 0
     if winHit !=0:
       avgWin = winRtn / winHit
+      winPercent =  float(winHit) / float(hit)
     if hit != 0:
       winPer = winHit / hit
       avgRtn = totRtn / hit
+    sortedRtns = sorted(sortedRtns)
+    indexedReturns = pd.Series(rtns, name="returns", index = dates)
+    # print indexedReturns
     data = [hit,
       mx,
       mn,
@@ -656,13 +680,14 @@ def rtnStats(rtn):
       totRtn,
       winHit,
       winRtn,
+      winPercent,
       lossHit,
-      mxWinStr,
+      str(mxWinStr) + " :: " + str(winDate),
       mxWinStrRtn,
-      mxLossStr,
+      str(mxLossStr) + " :: " + str(lossDate),
       mxLossStrRtn,
       drawDown,
-      rtns.sort()]
+      str(sortedRtns)]
     index = [
       "Hit Count",
       "Max",
@@ -670,6 +695,7 @@ def rtnStats(rtn):
       "Average Return",
       "Total Return",
       "Win #",
+      "Win Return",
       "Win %",
       "Loss #",
       "Count Win Streak",
@@ -972,7 +998,7 @@ for stock in stockInfo:
   resReturns = returns[0]
   returnsFrame = pd.concat([returnsFrame,resReturns], axis = 1)
 
-  stats = rtnStats(resReturns)
+  stats = rtnStats(resReturns, df[0])
   resultsFrame = pd.concat([resultsFrame, stats], axis = 1)
 
   # save in temp stock df
