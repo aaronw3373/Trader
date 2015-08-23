@@ -49,6 +49,9 @@ http://pandas.pydata.org/pandas-docs/stable/install.html
 <!-- Go into that directory and type: python test.py -->
 <!-- Once complete if there are no errors then you are set to use trader -->
 
+#my notes
+run importer not readFile when working from a folder of objects.
+
 
 # Kai Notes
 

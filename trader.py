@@ -1,6 +1,7 @@
 print("starting up...")
 import time
 start_time = time.time()
+
 from index import *
 import xlrd
 import sys
@@ -277,6 +278,7 @@ finalReturnDays = int(varsSheet.row_values(59)[3])
 
 # List of functions for reading and maniplulating files
 
+# read folder
 def importer(folder):
   global inputDF
   data_fs = fsopendir(folder)
@@ -286,6 +288,7 @@ def importer(folder):
     # the brake makes it only take the first file
     break
 
+# read file
 def readFile():
   # TODO make the top end of the range the last valid value
   # now it is at 13660 instead of 1270 and so it takes a lot longer
@@ -310,12 +313,14 @@ def readFile():
       # take out this return to do the whole set of stocks not just the first
       # return
 
+# save sheet
 def save_xls(list_dfs, xls_path):
   writer = pd.ExcelWriter(xls_path)
   for n, df in enumerate(list_dfs):
     df.to_excel(writer,'sheet%s' % n, engine="openpyxl")
   writer.save()
 
+# evalualte signal
 def strParserEval(input):
   words = input.split()
   res = "signals"
@@ -330,11 +335,12 @@ def strParserEval(input):
       if count == maximum:
         break
   except:
-    print "Unexpected error: trader.py lines 341-346"
+    print "Unexpected error: trader.py lines 331-336"
     return "Error"
   else:
     return res
 
+# make column from signals
 def makeCol(opp, sig1, sig2, sig3, sig4, sig5):
   array = []
   numTrue = 0
@@ -447,6 +453,7 @@ def makeCol(opp, sig1, sig2, sig3, sig4, sig5):
   # print numTrue
   return result
 
+# find number of columns
 def findNumCol():
   numCol = 0
   for i in range(27, 37):
@@ -454,12 +461,14 @@ def findNumCol():
       numCol += 1
   return numCol
 
+# determine if a column is there
 def canMakeCol(colNum):
   if varsSheet.row_values(27 + colNum)[3]:
     return eval(makeColsArr[colNum])
   else:
     return 0
 
+# get columns for final
 def parseTestCols(testNum, partNum):
     array = []
     col = "test" + str(testNum) + "part" + str(partNum) + "col"
@@ -470,6 +479,7 @@ def parseTestCols(testNum, partNum):
         array.append(res)
     return array
 
+# get the parameters to run final
 def finalTestParams(testNum, partNum):
     testCols = parseTestCols(testNum,partNum)
     numCols = len(testCols)
@@ -496,6 +506,7 @@ def finalTestParams(testNum, partNum):
         })
     return colArr, sumNum, numCols, skip
 
+# run part of the test final test
 def finalTestPart(testNum, partNum):
     params =  finalTestParams(testNum, partNum)
     cols = params[0]
@@ -520,6 +531,7 @@ def finalTestPart(testNum, partNum):
         num += 1
     return array, skip
 
+# final test 1 call
 def finalTest1():
     numTests = 0
     for n in range(0, 7):
@@ -548,6 +560,7 @@ def finalTest1():
     result = pd.Series(resArray, name=setColName())
     return resArray, result, finalArr
 
+# final test 2 call
 def finalTest2(dependent, done):
     numTests = 0
     for n in range(0, 5):
@@ -584,6 +597,7 @@ def finalTest2(dependent, done):
     result = pd.Series(final, name=setColName())
     return result
 
+# calculate the returs
 def calcRtns(final2, close, open, numDays):
     array = []
     for i in range(0, len(final2)):
@@ -596,6 +610,7 @@ def calcRtns(final2, close, open, numDays):
     result = pd.Series(array, name=stock["stockName"], index=df[0])
     return result, array
 
+# get stats on the returns
 def rtnStats(rtn, date):
     totRtn = 0
     rtns = []
@@ -707,6 +722,7 @@ def rtnStats(rtn, date):
     result = pd.Series(data, name=stock["stockName"], index=index)
     return result
 
+# array of column inputs
 makeColsArr = ["makeCol(col0opp,col0sig1,col0sig2,col0sig3,col0sig4,col1sig5)",
   "makeCol(col1opp,col1sig1,col1sig2,col1sig3,col1sig4,col1sig5)",
   "makeCol(col2opp,col2sig1,col2sig2,col2sig3,col2sig4,col2sig5)",
@@ -719,6 +735,7 @@ makeColsArr = ["makeCol(col0opp,col0sig1,col0sig2,col0sig3,col0sig4,col1sig5)",
   "makeCol(col9opp,col9sig1,col9sig2,col9sig3,col9sig4,col9sig5)"]
  # stringify all the signal definitions to be called when needed
 
+# all possible signals
 signals = {
     "topLine": {
       "close": "topLine(df[1], [df[5],df[6],df[7],df[8],df[9]])",
@@ -1007,7 +1024,7 @@ for stock in stockInfo:
 
 
   print(str(stock["stockName"]) + " %g seconds" % (time.time() - start_time2))
-  save_xls([df],str(stock["stockName"]) + ".xlsx")
+  # save_xls([df],str(stock["stockName"]) + ".xlsx")
 
 # save and join the tables.
 print("saving results...")
