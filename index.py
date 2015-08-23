@@ -38,9 +38,23 @@ def numDayAvg(input, numDays):
   return avg
 
 # find returns
-def numDayRtn(input, numDays):
+def DayRtn(input, numDays):
   temp = input.pct_change(periods=numDays)
   rtn = pd.Series(temp, name=setColName())
+  return rtn
+
+def numDayRtn(input, numDays):
+  array = []
+  for i in range(0, len(input)):
+    AVG = 0
+    if numDays > i:
+      AVG = None
+    else:
+      AVG = 0
+      for j in range(0, numDays):
+        AVG += input[i-j]
+    array.append(AVG)
+  rtn = pd.Series(array, name=setColName())
   return rtn
 
 def nightRtn(closeYesterday, openToday):

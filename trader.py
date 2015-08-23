@@ -4,6 +4,7 @@ start_time = time.time()
 from index import *
 import xlrd
 import sys
+
 # uncomment to run importer
 # from fs.opener import fsopendir
 
@@ -583,18 +584,14 @@ def finalTest2(dependent, done):
     result = pd.Series(final, name=setColName())
     return result
 
-def calcRtns(final2, rtn1, numDays):
+def calcRtns(final2, close, open, numDays):
     array = []
     for i in range(0, len(final2)):
-      if final2[i] == 1:
-        rtn = 0
-        for j in range(1, numDays+1):
-          if (i + j) < len(rtn1):
-            rtn += rtn1[i + j]
+      if final2[i] == 1 and len(final2) > (i + 15):
+        rtn = close[i + 15] / open[i+1]
         array.append(rtn)
       else:
         array.append(None)
-
     result = pd.Series(array, name=stock["stockName"], index=df[0])
     return result, array
 
@@ -868,12 +865,12 @@ signals = {
     "variable":{
       "crossPrice": "crossVarPrice(df[1], varInputPrice1)",
       "crossPercent": {
-        "2": "crossVarPercent(df[10], varInputPercent2)",
-        "3": "crossVarPercent(df[11], varInputPercent3)",
-        "5": "crossVarPercent(df[12], varInputPercent5)",
-        "1": "crossVarPercent(df[15], varInputPercent1)",
-        "day": "crossVarPercent(df[14], varInputPercentDay)",
-        "night": "crossVarPercent(df[13], varInputPercentNt)"
+        "2": "crossVarPercent(df[13], varInputPercent2)",
+        "3": "crossVarPercent(df[14], varInputPercent3)",
+        "5": "crossVarPercent(df[15], varInputPercent5)",
+        "1": "crossVarPercent(df[12], varInputPercent1)",
+        "day": "crossVarPercent(df[10], varInputPercentDay)",
+        "night": "crossVarPercent(df[11], varInputPercentNt)"
       },
       "high": {
         "interday": "highBtwIDays(df[1], df[3], varInputDayIH, varInputPercentIH)",
@@ -884,7 +881,7 @@ signals = {
         "endDay": "lowBtwEDays(df[4], df[3], varInputDayEL, varInputPercentEL)"
       },
       "returnLimit": "varRtnLimit(df[3], df[4],varInputPercent1Limit)",
-      "dayReturn": "varDayRtn(df[1], varInputNumDays,varInputPercentDays)"
+      "dayReturn": "varDayRtn(df[1], varInputNumDays,varInputPercentDays)",
     }
 }
 
@@ -929,12 +926,12 @@ for stock in stockInfo:
 
   # Get percent return over number of days
   # 10 -15
-  df = pd.concat([df, numDayRtn(df[1], 2)],axis=1)
-  df = pd.concat([df, numDayRtn(df[1], 3)],axis=1)
-  df = pd.concat([df, numDayRtn(df[1], 5)],axis=1)
   df = pd.concat([df, nightRtn(df[1], df[2])],axis=1)
   df = pd.concat([df, dayRtn(df[2], df[1])],axis=1)
-  df = pd.concat([df, numDayRtn(df[1], 1)],axis=1)
+  df = pd.concat([df, DayRtn(df[1], 1)],axis=1)
+  df = pd.concat([df, numDayRtn(df[12], 2)],axis=1)
+  df = pd.concat([df, numDayRtn(df[12], 3)],axis=1)
+  df = pd.concat([df, numDayRtn(df[12], 5)],axis=1)
 
   setColName()
   # Section 3
@@ -962,6 +959,8 @@ for stock in stockInfo:
   setColName()
   # run final tests
 
+
+
   final1 = finalTest1()
   dependent = final1[0]
   done = final1[2]
@@ -969,7 +968,7 @@ for stock in stockInfo:
   final2 = finalTest2(dependent, done)
 
   # calculate returns returns.
-  returns = calcRtns(final2, df[15], finalReturnDays)
+  returns = calcRtns(final2, df[1], df[2], finalReturnDays)
   resReturns = returns[0]
   returnsFrame = pd.concat([returnsFrame,resReturns], axis = 1)
 
@@ -982,7 +981,7 @@ for stock in stockInfo:
 
 
   print(str(stock["stockName"]) + " %g seconds" % (time.time() - start_time2))
-  # save_xls([df],str(stock["stockName"]) + ".xlsx")
+  save_xls([df],str(stock["stockName"]) + ".xlsx")
 
 # save and join the tables.
 print("saving results...")
