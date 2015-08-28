@@ -535,7 +535,7 @@ def finalTestPart(testNum, partNum):
 def finalTest1():
     numTests = 0
     for n in range(0, 7):
-      if varsSheet.row_values(44 + n)[2]:
+      if varsSheet.row_values(44 + n)[4]:
         numTests += 1
     resArray = []
     finalArr = []
@@ -564,7 +564,7 @@ def finalTest1():
 def finalTest2(dependent, done):
     numTests = 0
     for n in range(0, 5):
-      if varsSheet.row_values(53 + n)[2]:
+      if varsSheet.row_values(53 + n)[4]:
         numTests += 1
     resArray = []
     tests = []
@@ -573,27 +573,35 @@ def finalTest2(dependent, done):
       test = finalTestPart(2, j)
       tests.append(test[0])
       skips.append(test[1])
-    for i in range(0, len(tests[0])):
-      res = 0
-      for k in range(0, numTests):
-        if skips[k]:
-          if tests[k][i] == 1:
-            res = 2
+    if len(tests) > 0:
+      for i in range(0, len(tests[0])):
+        res = 0
+        for k in range(0, numTests):
+          if skips[k]:
+            if tests[k][i] == 1:
+              res = 2
+          else:
+            if tests[k][i] == 1:
+              res = 1
+        if res == 1 and dependent[i] == 1:
+          resArray.append(1)
+        elif res == 2:
+          resArray.append(1)
         else:
-          if tests[k][i] == 1:
-            res = 1
-      if res == 1 and dependent[i] == 1:
-        resArray.append(1)
-      elif res == 2:
-        resArray.append(1)
-      else:
-        resArray.append(0)
+          resArray.append(0)
     final = []
-    for l in range(0, len(done)):
-      if done[l] == 1 or resArray[l] == 1:
-        final.append(1)
-      else:
-        final.append(0)
+    if len(resArray) > 0:
+      for l in range(0, len(done)):
+        if done[l] == 1 or resArray[l] == 1:
+          final.append(1)
+        else:
+          final.append(0)
+    else:
+      for l in range(0, len(done)):
+        if done[l] == 1:
+          final.append(1)
+        else:
+          final.append(0)
     result = pd.Series(final, name=setColName())
     return result
 
@@ -648,7 +656,7 @@ def rtnStats(rtn, date):
     winDates = []
     winDate = None
     lossDates = []
-    winDate = None
+    lossDate = None
     for j in range(0,len(rtns)):
       # print dates[j], rtns[j]
       if rtns[j] > 0:
