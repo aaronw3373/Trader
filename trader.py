@@ -7,12 +7,13 @@ import xlrd
 import sys
 
 # uncomment to run importer
-# from fs.opener import fsopendir
+from fs.opener import fsopendir
 
 # Input variables
 vars_model = xlrd.open_workbook(sys.argv[2])
 varsSheet = vars_model.sheets()[0]
 varInputPrice1 = varsSheet.row_values(4)[5]
+varInputPriceDirection = varsSheet.row_values(4)[6]
 varInputPercent1 = varsSheet.row_values(5)[5]
 varInputPercent2 = varsSheet.row_values(6)[5]
 varInputPercent3 = varsSheet.row_values(7)[5]
@@ -281,12 +282,17 @@ finalReturnDays = int(varsSheet.row_values(59)[3])
 # read folder
 def importer(folder):
   global inputDF
-  data_fs = fsopendir(folder)
-  for item in data_fs:
-    print("importing "+ item)
-    inputDF = pd.concat([inputDF, pd.read_excel(str(folder) +'/'+ str(item))],axis=1)
-    # the brake makes it only take the first file
-    break
+  try:
+    data_fs = fsopendir(folder)
+    for item in data_fs:
+      print("importing "+ item)
+      inputDF = pd.concat([inputDF, pd.read_excel(str(folder) +'/'+ str(item))],axis=1)
+      # the brake makes it only take the first file
+      break
+  except:
+    inputDF = pd.read_excel(folder)
+  else:
+    print("failure")
 
 # read file
 def readFile():
@@ -914,7 +920,7 @@ signals = {
       }
     },
     "variable":{
-      "crossPrice": "crossVarPrice(df[1], varInputPrice1)",
+      "crossPrice": "crossVarPrice(df[1], varInputPrice1, varInputPriceDirection)",
       "crossPercent": {
         "2": "crossVarPercent(df[13], varInputPercent2)",
         "3": "crossVarPercent(df[14], varInputPercent3)",
@@ -936,13 +942,12 @@ signals = {
     }
 }
 
+print varInputPriceDirection
 # GET Stock Data File
 print("importing files...")
 # new way
-# inputDF = pd.DataFrame()
-# importer(sys.argv[1])
-# old way
-inputDF = pd.read_excel(sys.argv[1])
+inputDF = pd.DataFrame()
+importer(sys.argv[1])
 
 #
 # Parse through the stocks

@@ -162,19 +162,38 @@ def crossBelow(test, other):
   return results
 
 # cross a variable price
-def crossVarPrice(test, var):
+def crossVarPrice(test, var, direct):
   array = []
   array.append(0)
-  for i in range(1, len(test)):
-    if pd.notnull(test[i]):
-      res = 0
-      if test[i] > var and test[i-1] < var:
-          res = 1
-      elif test[i] < var and test[i-1] > var:
-          res = 1
-      array.append(res)
-    else:
-      array.append(0)
+  if direct == "above":
+    for i in range(1, len(test)):
+      if pd.notnull(test[i]):
+        res = 0
+        if test[i] > var and test[i-1] < var:
+            res = 1
+        array.append(res)
+      else:
+        array.append(0)
+  elif direct == "below":
+    for i in range(1, len(test)):
+      if pd.notnull(test[i]):
+        res = 0
+        if test[i] < var and test[i-1] > var:
+            res = 1
+        array.append(res)
+      else:
+        array.append(0)
+  else:
+    for i in range(1, len(test)):
+      if pd.notnull(test[i]):
+        res = 0
+        if test[i] > var and test[i-1] < var:
+            res = 1
+        elif test[i] < var and test[i-1] > var:
+            res = 1
+        array.append(res)
+      else:
+        array.append(0)
   results = pd.Series(array, name=setColName())
   return results
 
